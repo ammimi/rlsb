@@ -6,7 +6,7 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import Structure, Menu
+from .models import Structure, Menu,SystemSetup
 
 User = get_user_model()
 
@@ -124,4 +124,10 @@ class PasswordChangeForm(forms.Form):
 class MenuForm(forms.ModelForm):
     class Meta:
         model = Menu
+        fields = '__all__'
+
+
+class SystemSetupForm(forms.ModelForm):
+    class Meta:
+        model = SystemSetup
         fields = '__all__'

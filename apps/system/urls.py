@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import SystemView
+from .views import SystemView,SystemSetupView
 from . import views_structure, views_user, views_menu, views_role
 
 app_name = 'system'
@@ -35,4 +35,6 @@ urlpatterns = [
     path('rbac/role/role2user/', views_role.Role2UserView.as_view(), name="rbac-role-role2user"),
     path('rbac/role/role2menu/', views_role.Role2MenuView.as_view(), name="rbac-role-role2menu"),
     path('rbac/role/role2menu_list/', views_role.Role2MenuListView.as_view(), name="rbac-role-role2menu_list"),
+
+    path('tools/system_setup/', SystemSetupView.as_view(), name="system_setup"),
 ]
