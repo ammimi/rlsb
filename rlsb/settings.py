@@ -54,6 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'rlsb.urls'
+AUTH_USER_MODEL = 'system.UserProfile'
 
 TEMPLATES = [
     {

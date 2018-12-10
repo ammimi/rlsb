@@ -12,7 +12,7 @@ from django.shortcuts import render
 
 from .mixin import LoginRequiredMixin
 from .models import Role, Menu
-from apps.custom import SandboxCreateView, SandboxUpdateView, BreadcrumbMixin
+from custom import SandboxCreateView, SandboxUpdateView, BreadcrumbMixin
 
 User = get_user_model()
 

@@ -8,8 +8,8 @@ from django.views.generic import CreateView, UpdateView
 from django.shortcuts import HttpResponse
 from django.http import Http404
 
-from apps.system.mixin import LoginRequiredMixin
-from apps.system.models import Menu
+from system.mixin import LoginRequiredMixin
+from system.models import Menu
 
 
 class BreadcrumbMixin:

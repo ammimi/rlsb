@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 
 from .mixin import LoginRequiredMixin
-from apps.custom import BreadcrumbMixin
+from custom import BreadcrumbMixin
 
 
 class SystemView(LoginRequiredMixin, BreadcrumbMixin, TemplateView):
