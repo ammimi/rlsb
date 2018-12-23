@@ -1,0 +1,119 @@
+{% extends "base-left.html" %}
+{% load staticfiles %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header margin-bottom">
+  <ol class="breadcrumb">
+    <!--<li><a href=""><i class="fa fa-dashboard"></i>办公平台</a></li>-->
+    <!--<li class="active"><a href="#">资产管理</a></li>-->
+    <!--<li class="active"><a href="#">资产详情</a></li>-->
+  </ol>
+</section>
+    <!-- Main content -->
+
+  <section class="content">
+      <div class="row">
+       <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">详情</h3>
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="btn-group pull-right margin-b-10 margin-r-5">
+                  <button type="button" class="btn btn-primary btn-sm" title="返回" id="btnReturn">
+                      <i class="fa fa-undo"> 返回</i>
+                  </button>
+                  <button type="button" class="btn btn-info btn-sm" title="编辑" id="doUpdate"
+                          onclick="doUpdate({{ facedata.id }})">
+                      <i class="fa fa-pencil"> 编辑</i>
+                  </button>
+                </div>
+           </div>
+
+               <div class="table-responsive mailbox-messages">
+                  <table class="table" id="tbWorkList"  style="white-space: nowrap;">
+                    <tbody>
+                        <tr class="info">
+                            <td width="10%"><strong>姓名</strong></td>
+                            <td class="text-left">{{ facedata.owner }}</td>
+                            <td width="10%"><strong>人脸样本ID</strong></td>
+                            <td class="text-left">{{ facedata.face_id}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>人脸拼音名称</strong></td>
+                            <td>{{ facedata.face_name }}</td>
+                            <td><strong>人脸中文名称</strong></td>
+                            <td>{{ facedata.face_cname }}</td>
+                        </tr>
+                    <tr>
+                            <td><strong>人脸样本图片Url地址</strong></td>
+                            <td>{{ facedata.face_image_url }}</td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+
+
+                    </tbody>
+                  </table>
+                </div>
+               <br>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+      </div>
+        <!-- /.col -->
+     <!-- TO DO List -->
+
+
+    </section>
+
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block javascripts %}
+  <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script type="text/javascript">
+  	$(function() {
+	    $('#OA-FACEDATA').addClass('active');
+
+	});
+  	//返回
+    $("#btnReturn").click(function(){
+		history.back();
+	});
+
+    function doUpdate(id){
+	var div=layer.open({
+		type : 2,
+		title : '修改信息',
+		shadeClose : false,
+    	maxmin : true,
+		area : [ '800px', '580px' ],
+		content : "{% url 'facedata:update' %}"+'?id='+id,
+		end : function() {
+			//oDataTable.ajax.reload();
+            window.location.reload();
+
+		}
+	});
+	layer.full(div)
+}
+
+
+</script>
+
+{% endblock %}
