@@ -98,6 +98,10 @@ $(function() {
 
 								{
 									data : "image",//parent
+                                    render : function(data, type, full, meta) {
+                                        if (data) {var ret = "<img src='/media/" + data + "' width='50px' height='50px'>";}
+                                        else {var ret = ''}
+									     return ret;}
 
 								},
 

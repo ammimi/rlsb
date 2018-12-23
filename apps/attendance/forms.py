@@ -3,8 +3,18 @@ from django import forms
 from .models import AttendanceInfo
 from django.forms import widgets
 from django.contrib.auth import get_user_model
-
+from django.forms.widgets import ClearableFileInput
 User = get_user_model()
+
+
+
+class ImageWidget(ClearableFileInput):
+    template_with_initial = (
+        '%(initial_text)s: <a href="%(initial_url)s"><img width="100px" height="100px" src="%(initial_url)s"></a> '
+        '%(clear_template)s<br />%(input_text)s: %(input)s'
+    )
+
+    template_with_clear = ''
 
 class AttendanceInfoForm(forms.ModelForm):
     class Meta:

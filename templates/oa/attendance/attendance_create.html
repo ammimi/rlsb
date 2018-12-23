@@ -63,12 +63,15 @@
 <script type="text/javascript">
 
     $("#btnSave").click(function () {
-        var data = $("#addForm").serialize();
+        {#var data = $("#addForm").serialize();#}
+        var data =  new FormData($( "#addForm" )[0]);
         $.ajax({
             type: $("#addForm").attr('method'),
             url: "{% url 'attendance:create' %}",
             data: data,
             cache: false,
+            processData: false,
+            contentType: false,
             success: function (msg) {
                 if (msg.status == 'success') {
                     layer.alert('数据保存成功！', {icon: 1}, function (index) {

@@ -51,11 +51,13 @@
                             <td class="text-left">{{ attendance.attendancetime|date:'Y-m-d H:i:s'}}</td>
                         </tr>
 
-                    <tr>
+                        <tr>
                             <td><strong>考勤图片</strong></td>
-                            <td>{{ attendance.image }}</td>
-                            <td></td>
-                            <td></td>
+
+                            <td><a href="/media/{{ attendance.image }}"><img src="/media/{{ attendance.image }}"
+                                                                             width="200px" height="200px"
+                                                                             alt="User Image"></td>
+
 
                         </tr>
 
