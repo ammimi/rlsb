@@ -8,9 +8,10 @@
         <!-- Logo -->
         <a href="#" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>人脸识别</b></span>
+            <span class="logo-mini"><b>人脸考勤</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>人脸识别管理系统</b></span>
+            <span class="logo-lg"><b>{% if system_setup.mainTitle %}{{ system_setup.mainTitle }}{% else %}人脸考勤信息管理系统{% endif %}
+            </b></span>
         </a>
 
         <!-- Header Navbar -->

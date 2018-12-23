@@ -18,9 +18,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.urls import re_path
 from django.views.static import serve
-
-from system.views_user import IndexView, LoginView, LogoutView
-
+import debug_toolbar
+from system.views_user import IndexView, LoginView, LogoutView,OAIndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,11 +27,13 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('system/', include('system.urls', namespace='system')),
-
+    path('oa/',OAIndexView.as_view(), name='oa' ),
+    path('oa/facedata/', include('facedata.urls', namespace='facedata')),
+    path('oa/attendance/', include('attendance.urls', namespace='attendance')),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
         re_path(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
-
+        re_path(r'^__debug__/', include(debug_toolbar.urls)),
     ]

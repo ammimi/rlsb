@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'system',
+    'facedata',
+    'attendance',
+    'debug_toolbar.apps.DebugToolbarConfig',
 ]
 
 MIDDLEWARE = [
@@ -49,8 +52,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'apps.system.middleware.MenuCollection',
     'apps.system.middleware.RbacMiddleware',
+
 ]
 
 ROOT_URLCONF = 'rlsb.urls'
@@ -74,14 +79,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'rlsb.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'rlsb',
+        'USER': 'admin',
+        'PASSWORD': '040122',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
@@ -140,6 +155,7 @@ SAFE_URL = [r'^/$',
             '/media/',
             '/admin/',
             '/ckeditor/',
+            '/__debug__/',
             ]
 
 # session timeout
@@ -147,3 +163,24 @@ SAFE_URL = [r'^/$',
 SESSION_COOKIE_AGE = 60 * 20 * 1200
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
+
+#debug_tool
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+
+INTERNAL_IPS = ("127.0.0.1","192.168.187.1")
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+]

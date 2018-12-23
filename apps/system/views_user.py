@@ -16,7 +16,7 @@ from django.db.models import Q
 
 from .forms import LoginForm, UserCreateForm, UserUpdateForm, PasswordChangeForm
 from .mixin import LoginRequiredMixin
-from .models import Structure, Role
+from .models import Structure, Role,SystemSetup,Menu
 from apps.custom import BreadcrumbMixin
 
 User = get_user_model()
@@ -25,15 +25,23 @@ User = get_user_model()
 class IndexView(LoginRequiredMixin, View):
 
     def get(self, request):
-        return render(request, 'index.html')
+        ret=(SystemSetup.getSystemSetupLastData())
+        return render(request, 'index.html',ret)
 
+class OAIndexView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        ret=(SystemSetup.getSystemSetupLastData())
+        return render(request, 'oa/index.html',ret)
 
 class LoginView(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return render(request, 'system/users/login.html')
+            ret = (SystemSetup.getSystemSetupLastData())
+            return render(request, 'system/users/login.html',ret)
         else:
+            ret = (SystemSetup.getSystemSetupLastData())
             return HttpResponseRedirect('/')
 
     def post(self, request):

@@ -1,16 +1,18 @@
 import json
 import re
-from datetime import datetime, timedelta
 
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.views.generic.base import View
 from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
+
 
 from system.mixin import LoginRequiredMixin
 from .models import AttendanceInfo
-from .forms import AttendanceInfoForm
+from .forms import AttendanceInfoForm,AttendanceInfoCreateForm,AttendanceInfoUpdateForm
 from system.models import Role,Menu
 from system.models import SystemSetup
 
@@ -19,145 +21,102 @@ from system.models import SystemSetup
 User = get_user_model()
 
 
-
-
-class AttendanceView(LoginRequiredMixin, View):
+class AttendanceInfoView(LoginRequiredMixin, View):
 
     def get(self, request):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
-        status_list = []
-        for status in Asset.asset_status:
-            status_dict = dict(item=status[0], value=status[1])
-            status_list.append(status_dict)
-        asset_types = AssetType.objects.all()
-        ret['status_list'] = status_list
-        ret['asset_types'] = asset_types
-        return render(request, 'adm/asset/asset.html', ret)
+        ret['titles'] = ('姓名','考勤时间','考勤图片','详情')
+        return render(request, 'oa/attendance/attendance.html', ret)
 
 
-class AssetListView(LoginRequiredMixin, View):
+class AttendanceInfoListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'assetNum', 'assetType__name', 'brand', 'model', 'warehouse', 'status', 'owner__name', 'operator', 'add_time']
+        fields = ['id', 'owner__name', 'attendancetime', 'image',]
         filters = dict()
-
-        if 'assetNum' in request.GET and request.GET['assetNum']:
-            filters['assetNum__icontains'] = request.GET['assetNum']
-        if 'assetType' in request.GET and request.GET['assetType']:
-            filters['assetType'] = request.GET['assetType']
-        if 'model' in request.GET and request.GET['model']:
-            filters['model__icontains'] = request.GET['model']
-        if 'status' in request.GET and request.GET['status']:
-            filters['status'] = request.GET['status']
-        ret = dict(data=list(Asset.objects.filter(**filters).values(*fields)))
+        #部门过滤条件
+        # if request.user.department_id == 9:
+        #     filters['belongs_to_id'] = request.user.id
+        ret = dict(data=list(AttendanceInfo.objects.filter(**filters).values(*fields)))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
 
 
-class AssetCreateView(LoginRequiredMixin, View):
+class AttendanceInfoCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
         ret = dict()
-        status_list = []
-        for status in Asset.asset_status:
-            status_dict = dict(item=status[0], value=status[1])
-            status_list.append(status_dict)
-        asset_type = AssetType.objects.values()
-        role = get_object_or_404(Role, title="销售")
-        user_info = role.userprofile_set.all()
-        ret['asset_type'] = asset_type
-        ret['user_info'] = user_info
-        ret['status_list'] = status_list
-        return render(request, 'adm/asset/asset_create.html', ret)
+
+        ret['form'] = AttendanceInfoCreateForm(user=request.user)
+        # ret['user_info'] = user_info
+
+        return render(request, 'oa/attendance/attendance_create.html', ret)
 
     def post(self, request):
         res = dict()
-        asset_create_form = AssetCreateForm(request.POST)
-        if asset_create_form.is_valid():
-            asset_create_form.save()
+        attendanceinfo_create_form = AttendanceInfoCreateForm(request.POST,request.FILES or None,user=request.user)
+        if attendanceinfo_create_form.is_valid():
+            attendanceinfo_create_form.save()
             res['status'] = 'success'
         else:
             pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
-            errors = str(asset_create_form.errors)
-            asset_form_errors = re.findall(pattern, errors)
+            errors = str(attendanceinfo_create_form.errors)
+            attendanceinfo_create_form = re.findall(pattern, errors)
             res = {
                 'status': 'fail',
-                'asset_form_errors': asset_form_errors[0]
+                'attendanceinfo_create_form': attendanceinfo_create_form[0]
             }
 
         return HttpResponse(json.dumps(res), content_type='application/json')
 
 
-class AssetUpdateView(LoginRequiredMixin, View):
+class AttendanceInfoUpdateView(LoginRequiredMixin, View):
 
     def get(self, request):
         ret = dict()
         status_list = []
         if 'id' in request.GET and request.GET['id']:
-            asset = get_object_or_404(Asset, pk=request.GET['id'])
-            ret['asset'] = asset
-        for status in Asset.asset_status:
-            status_dict = dict(item=status[0], value=status[1])
-            status_list.append(status_dict)
-        asset_type = AssetType.objects.values()
-        role = get_object_or_404(Role, title="销售")
-        user_info = role.userprofile_set.all()
-        ret['asset_type'] = asset_type
-        ret['user_info'] = user_info
-        ret['status_list'] = status_list
-        return render(request, 'adm/asset/asset_update.html', ret)
+            attendanceinfo = get_object_or_404(AttendanceInfo, pk=request.GET['id'])
+            ret['attendance'] = attendanceinfo
+            ret['form'] = AttendanceInfoUpdateForm(instance=attendanceinfo,user=request.user)
+
+        return render(request, 'oa/attendance/attendance_update.html', ret)
 
     def post(self, request):
         res = dict()
-        asset = get_object_or_404(Asset, pk=request.POST['id'])
-        asset_update_form = AssetUpdateForm(request.POST, instance=asset)
-        if asset_update_form.is_valid():
-            asset_update_form.save()
-            status = asset.get_status_display()
-            asset_log = AssetLog()
-            asset_log.asset_id = asset.id
-            asset_log.operator = request.user.name
-            asset_log.desc = """
-            用户信息：{}  || 责任人：{}  || 资产状态：{}""".format(
-                asset_update_form.cleaned_data.get("customer"),
-                asset_update_form.cleaned_data.get("owner"),
-                status,
-            )
-            asset_log.save()
+        attendanceinfo = get_object_or_404(AttendanceInfo, pk=request.POST['id'])
+        attendanceinfo_update_form = AttendanceInfoUpdateForm(request.POST,request.FILES or None, instance=attendanceinfo,user=request.user)
+        if attendanceinfo_update_form.is_valid():
+            attendanceinfo_update_form.save()
             res['status'] = 'success'
         else:
             pattern = '<li>.*?<ul class=.*?><li>(.*?)</li>'
-            errors = str(asset_update_form.errors)
-            asset_form_errors = re.findall(pattern, errors)
+            errors = str(attendanceinfo_update_form.errors)
+            attendanceinfo_form_errors = re.findall(pattern, errors)
             res = {
                 'status': 'fail',
-                'asset_form_errors': asset_form_errors[0]
+                'Acl_form_errors': attendanceinfo_form_errors[0]
             }
 
         return HttpResponse(json.dumps(res), content_type='application/json')
 
-class AssetDetailView(LoginRequiredMixin, View):
-    """
-    资产管理：详情页面
-    """
+class AttendanceInfoDetailView(LoginRequiredMixin, View):
+
     def get(self, request):
         ret = dict()
         if 'id' in request.GET and request.GET['id']:
-            asset = get_object_or_404(Asset, pk=request.GET.get('id'))
-            asset_log = asset.assetlog_set.all()
-            asset_file = asset.assetfile_set.all()
-            ret['asset'] = asset
-            ret['asset_log'] = asset_log
-            ret['asset_file'] = asset_file
-        return render(request, 'adm/asset/asset_detail.html', ret)
+            attendanceinfo = get_object_or_404(AttendanceInfo, pk=request.GET.get('id'))
+            ret['attendance'] = attendanceinfo
+            # ret['Acl_log'] = Acl_log
+        return render(request, 'oa/attendance/attendance_detail.html', ret)
 
 
-class AssetDeleteView(LoginRequiredMixin, View):
+class AttendanceInfoDeleteView(LoginRequiredMixin, View):
 
     def post(self, request):
         ret = dict(result=False)
         if 'id' in request.POST and request.POST['id']:
             id_list = map(int, request.POST.get('id').split(','))
-            Asset.objects.filter(id__in=id_list).delete()
+            AttendanceInfo.objects.filter(id__in=id_list).delete()
             ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')

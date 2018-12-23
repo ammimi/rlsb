@@ -4,9 +4,9 @@ User = get_user_model()
 
 # Create your models here.
 class AttendanceInfo(models.Model):
-    attendancetime = models.DateTimeField(auto_now_add=True)
-    person = models.ForeignKey(User)  # unique=True, 这个字段在表中必须有唯一值.
-    image = models.ImageField( verbose_name="考勤图片")
+    owner = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='姓名')
+    attendancetime = models.DateTimeField(auto_now_add=True,verbose_name='考勤时间')
+    image = models.ImageField( upload_to="attendance/%Y/%m", null=True, blank=True,verbose_name="考勤图片")
 
     def __str__(self):
         return self.person.name
