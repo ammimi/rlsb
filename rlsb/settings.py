@@ -88,7 +88,11 @@ WSGI_APPLICATION = 'rlsb.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-
+'''
+.bash_rc 
+export mysqluser=******
+export mysqlpasswd=******
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
