@@ -53,11 +53,13 @@
 
                         <tr>
                             <td><strong>考勤图片</strong></td>
-
+                            {% if attendance.image %}
                             <td><a href="/media/{{ attendance.image }}"><img src="/media/{{ attendance.image }}"
                                                                              width="200px" height="200px"
                                                                              alt="User Image"></td>
-
+                            {% else %}
+                            <td></td>
+                            {% endif %}
 
                         </tr>
 
