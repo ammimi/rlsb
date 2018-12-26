@@ -158,41 +158,45 @@
                                 }
                             }
                         },
-                       {
-									data : "id",
-									{#width : "10%",#}
-									bSortable : "false",
-									render : function(data, type, row, meta) {
-										var ret="<button title='详情' onclick='doDetail("
-										+ data + ")'><i class='glyphicon glyphicon-list-alt'></i></button>";
-                                        ret=ret+"<button title='编辑' onclick='doUpdate("
-										+ data + ")'><i class='glyphicon glyphicon-pencil'></i></button>";
-										 ret=ret+"<button title='删除' onclick='doDelete("
-                                            + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
-										return ret;
-									}
-								} ],
+                        {
+                            data: "id",
+                            width: "12%",
+                            bSortable: "false",
+                            render: function (data, type, row, meta) {
+                                var ret = "";
+                                var ret = "<button title='详情-编辑' onclick='doUpdate("
+                                    + data + ")'><i class='glyphicon glyphicon-pencil'></i></button>";
+                                ret = ret + "<button name='btnChangepasswd' title='修改密码' onclick='doChangepasswd("
+                                    + data + ")'><i class='glyphicon glyphicon-asterisk'></i></button>";
+                                ret = ret + "<button name='btnConfig' title='删除' onclick='doDelete("
+                                    + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
+                                return ret;
+                            }
+                        }],
+                    "order": [
+                        [2, 'desc']
+                    ],
                 }));
             return oTable;
         }
     });
 </script>
 <script type="text/javascript">
-   $("#btnCreate").click(function() {
-		var div=layer.open({
-			type : 2,
-			title : '设备入库',
-			shadeClose : false,
-			maxmin : true,
-			area : [ '800px', '580px' ],
-			content : "{% url 'facedata:create' %}",
-			end : function() {
-				//关闭时做的事情
-				window.location.reload();
-			}
-		});
-           layer.full(div)
-	});
+    $("#btnCreate").click(function () {
+        var div = layer.open({
+            type: 2,
+            title: '新增',
+            shadeClose: false,
+            maxmin: true,
+            area: ['800px', '720px'],
+            content: '/system/basic/user/create',
+            end: function () {
+                //关闭时做的事情
+                oDataTable.ajax.reload();
+            }
+        });
+        layer.full(div)
+    });
 
             // 跳转到用户详情页面
     function doUpdate(id) {
