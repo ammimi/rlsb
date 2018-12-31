@@ -21,14 +21,14 @@ class FaceDataView(LoginRequiredMixin, View):
     def get(self, request):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
-        ret['titles'] = ('姓名','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片Url地址','详情')
+        ret['titles'] = ('姓名','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片','详情')
         return render(request, 'oa/facedata/facedata.html', ret)
 
 
 class FaceDataListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'owner__name', 'face_id', 'face_name','face_cname', 'face_image_url',]
+        fields = ['id', 'owner__name', 'face_id', 'face_name','face_cname', 'face_image',]
         filters = dict()
         #部门过滤条件
         # if request.user.department_id == 9:
@@ -49,7 +49,7 @@ class FaceDataCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         res = dict()
-        facedata_create_form = FaceDataCreateForm(request.POST,user=request.user)
+        facedata_create_form = FaceDataCreateForm(request.POST,request.FILES or None,user=request.user)
         if facedata_create_form.is_valid():
             facedata_create_form.save()
             res['status'] = 'success'
@@ -80,7 +80,7 @@ class FaceDataUpdateView(LoginRequiredMixin, View):
     def post(self, request):
         res = dict()
         facedata = get_object_or_404(FaceData, pk=request.POST['id'])
-        facedata_update_form = FaceDataUpdateForm(request.POST, instance=facedata,user=request.user)
+        facedata_update_form = FaceDataUpdateForm(request.POST,request.FILES or None, instance=facedata,user=request.user)
         if facedata_update_form.is_valid():
             facedata_update_form.save()
             res['status'] = 'success'
@@ -102,7 +102,6 @@ class FaceDataDetailView(LoginRequiredMixin, View):
         if 'id' in request.GET and request.GET['id']:
             facedata = get_object_or_404(FaceData, pk=request.GET.get('id'))
             ret['facedata'] = facedata
-            # ret['Acl_log'] = Acl_log
         return render(request, 'oa/facedata/facedata_detail.html', ret)
 
 

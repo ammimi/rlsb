@@ -102,8 +102,13 @@ $(function() {
 									data : "face_cname",//parent
 
 								},
-								{
-									data : "face_image_url",//parent
+
+                            {
+									data : "face_image",//parent
+                                    render : function(data, type, full, meta) {
+                                        if (data) {var ret = "<img src='/media/" + data + "' width='50px' height='50px'>";}
+                                        else {var ret = ''}
+									     return ret;}
 
 								},
 								{

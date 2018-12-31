@@ -57,11 +57,16 @@
                             <td>{{ facedata.face_cname }}</td>
                         </tr>
                     <tr>
-                            <td><strong>人脸样本图片Url地址</strong></td>
-                            <td>{{ facedata.face_image_url }}</td>
+                            <td><strong>人脸样本图片</strong></td>
+                            {% if facedata.face_image %}
+                            <td><a href="/media/{{ facedata.face_image }}"><img src="/media/{{ facedata.face_image }}"
+                                                                             width="200px" height="200px"
+                                                                             alt="User Image"></td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
                             <td></td>
                             <td></td>
-
                         </tr>
 
 

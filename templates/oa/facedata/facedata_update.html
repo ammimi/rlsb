@@ -9,7 +9,7 @@
 
 {% block main %}
 <div class="box box-danger">
-	<form class="form-horizontal" id="addForm" method="post">
+	<form class="form-horizontal" id="addForm" method="post" enctype="multipart/form-data">
 
 		{% csrf_token %}
 		<div class="box-body">
@@ -47,9 +47,9 @@
 
                 <div class="form-group has-feedback">
 
-                <label class="col-sm-2 control-label">{{ form.face_image_url.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.face_image.label}}</label>
                 <div class="col-sm-3">
-                    {{ form.face_image_url}}
+                    {{ form.face_image}}
 
                 </div>
                 </div>
@@ -75,12 +75,14 @@
 <script type="text/javascript">
 
 	$("#btnSave").click(function(){
-		var data = $("#addForm").serialize();
+		var data =  new FormData($( "#addForm" )[0]);
 		$.ajax({
 			type: $("#addForm").attr('method'),
 			url : "{% url 'facedata:update' %}",
 			data : data,
 			cache: false,
+            processData: false,
+            contentType: false,
 			success : function(msg) {
 				if (msg.status == 'success'){
 					layer.alert('数据保存成功！', {icon: 1},function(index){
