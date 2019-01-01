@@ -21,14 +21,14 @@ class FaceDataView(LoginRequiredMixin, View):
     def get(self, request):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
-        ret['titles'] = ('姓名','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片','详情')
+        ret['titles'] = ('姓名','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片','是否同步人脸数据','详情')
         return render(request, 'oa/facedata/facedata.html', ret)
 
 
 class FaceDataListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'owner__name', 'face_id', 'face_name','face_cname', 'face_image',]
+        fields = ['id', 'owner__name', 'face_id', 'face_name','face_cname', 'face_image','ifsync']
         filters = dict()
         #部门过滤条件
         # if request.user.department_id == 9:

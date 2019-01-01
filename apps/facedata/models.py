@@ -10,7 +10,7 @@ class FaceData(models.Model):
     face_name = models.CharField(max_length=30, verbose_name="人脸拼音名称")
     face_cname = models.CharField(max_length=30, verbose_name="人脸中文名称")
     face_image = models.ImageField( upload_to="facedata/%Y/%m", null=True, blank=True,verbose_name="人脸图片")
-
+    ifsync = models.BooleanField(verbose_name='是否同步数据',default=False)
     def __str__(self):
         return self.face_name
 

@@ -111,6 +111,19 @@ $(function() {
 									     return ret;}
 
 								},
+                            {
+                                data:'ifsync',
+                                render : function(data, type, full, meta) {
+                                    console.log(data)
+                                    if (data === true){
+                                       var ret = "<button class='btn  btn-success btn-xs'>已同步</button>";
+                                    }
+                                    else {
+                                        var ret="<button class='btn btn-warning btn-xs'>未同步</button>";
+                                    }
+                                    return ret;
+                                }
+                            },
 								{
 									data : "id",
 
