@@ -160,6 +160,7 @@ SAFE_URL = [r'^/$',
             '/admin/',
             '/ckeditor/',
             '/__debug__/',
+            '/',
             ]
 
 # session timeout
@@ -188,3 +189,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+# rlsb params
+RLSBURL = "http://222.128.127.3:8185/v0.13/"
+CLIENTID = 33
+CLIENTSECRET = "1234567890"

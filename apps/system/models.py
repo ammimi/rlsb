@@ -45,6 +45,10 @@ class Structure(models.Model):
     type_choices = (("unit", "单位"), ("department", "部门"))
     name = models.CharField(max_length=60, verbose_name="名称")
     type = models.CharField(max_length=20, choices=type_choices, default="department", verbose_name="类型")
+    client_name = models.CharField(max_length=30, blank=True,null=True, verbose_name="客户拼音名称")
+    client_cname = models.CharField(max_length=30, blank=True,null=True, verbose_name="客户中文名称")
+    client_id = models.CharField(max_length=30, blank=True,null=True,unique=True, verbose_name="客户标识ID")
+    client_secret = models.CharField(max_length=30, blank=True,null=True,verbose_name="客户密钥")
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, verbose_name="父类架构")
 
     class Meta:

@@ -34,6 +34,8 @@
                         <th>ID</th>
                         <th>名称</th>
                         <th>类别</th>
+                        <th>客户标识ID</th>
+                        <th>客户密钥</th>
                         <th>所属</th>
                         <th>操作</th>
                     </tr>
@@ -98,6 +100,16 @@
                                 }
                             }
                         },
+                         {
+                            data: "client_id",//parent
+                            width: "20%",
+                        },
+                         {
+                            data: "client_secret",//parent
+                            width: "20%",
+                        },
+
+
                         {
                             data: "parent__name",
                         },
@@ -114,6 +126,13 @@
                                     + data + ")'><i class='glyphicon glyphicon-user'></i></button>";
                                 ret = ret + "<button title='删除' onclick='doDelete("
                                     + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
+                                ret=ret+"<button title='上传客户数据' onclick='doAddClient("
+										+ data + ")'><i class='glyphicon glyphicon-cloud-upload'></i></button>";
+								 ret=ret+"<button title='删除云上客户数据' onclick='doDeleteClient("
+										+ data + ")'><i class='glyphicon glyphicon-cloud-download'></i></button>";
+								ret=ret+"<button title='更新客户数据' onclick='doUpdateClient("
+										+ data + ")'><i class='glyphicon glyphicon-refresh'></i></button>";
+
                                 return ret;
                             }
                         }],
@@ -253,6 +272,94 @@
             }
         });
     }
+
+    //同步单条人脸数据
+function doAddClient(id){
+    layer.alert('确定上传客户数据信息吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'system:addclient' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('上传成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail') {
+                        //alert(msg.message);
+                        layer.alert(msg.send_client_data, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+
+}
+
+//删除单条人脸数据（云上）
+function doDeleteClient(id){
+    layer.alert('确定删除客户数据信息吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'system:deleteclient' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('删除成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail'){
+                        //alert(msg.message);
+                        layer.alert(msg.delete_client_data, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+
+}
+//更新单条人脸数据（云上）
+function doUpdateClient(id){
+    layer.alert('确定要更新客户数据信息吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'system:updateclient' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('更新成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail'){
+                        //alert(msg.message);
+                        layer.alert(msg.updata_client_data, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+}
 
 </script>
 

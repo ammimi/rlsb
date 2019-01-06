@@ -42,10 +42,10 @@ class LoginView(View):
             return render(request, 'system/users/login.html',ret)
         else:
             ret = (SystemSetup.getSystemSetupLastData())
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/oa/')
 
     def post(self, request):
-        redirect_to = request.GET.get('next', '/')
+        redirect_to = '/oa/' if request.GET.get('next', '/') == '/' else request.GET.get('next', '/')
         login_form = LoginForm(request.POST)
         ret = dict(login_form=login_form)
         if login_form.is_valid():

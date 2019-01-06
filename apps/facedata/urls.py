@@ -1,9 +1,10 @@
 from django.urls import path
 
 from .views import FaceDataView,FaceDataListView,FaceDataCreateView,FaceDataUpdateView,FaceDataDetailView,FaceDataDeleteView
+from .views_api import SendFaceDataView,DeleteFaceDataView,UpdateFaceDataView,ManualClockView
 
+app_name = 'facedata'
 
-app_name = 'system'
 
 urlpatterns = [
     path('', FaceDataView.as_view(), name='facedata'),
@@ -14,5 +15,9 @@ urlpatterns = [
     path('delete/', FaceDataDeleteView.as_view(), name='delete'),
     # path('upload/', FaceDataUploadView.as_view(), name='upload'),
 
+    path('sendfacedata/',SendFaceDataView.as_view(),name='sendfacedata'),
+    path('deletefacedata/',DeleteFaceDataView.as_view(),name='deletefacedata'),
+    path('updatefacedata/', UpdateFaceDataView.as_view(), name='updatefacedata'),
 
+    path('manualclock/', ManualClockView.as_view(), name='manualclock'),
 ]

@@ -90,7 +90,7 @@ class FaceDataUpdateView(LoginRequiredMixin, View):
             facedata_form_errors = re.findall(pattern, errors)
             res = {
                 'status': 'fail',
-                'Acl_form_errors': facedata_form_errors[0]
+                'facedata_update_form': facedata_form_errors[0]
             }
 
         return HttpResponse(json.dumps(res), content_type='application/json')

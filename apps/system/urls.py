@@ -13,6 +13,10 @@ urlpatterns = [
     path('basic/structure/delete/', views_structure.StructureDeleteView.as_view(), name='basic-structure-delete'),
     path('basic/structure/add_user/', views_structure.Structure2UserView.as_view(), name='basic-structure-add_user'),
 
+    path('basic/structure/addclient/', views_structure.AddClientView.as_view(), name='addclient'),
+    path('basic/structure/deleteclient/', views_structure.DeleteClientView.as_view(), name='deleteclient'),
+    path('basic/structure/updateclient/', views_structure.UpdateClientView.as_view(), name='updateclient'),
+
     path('basic/user/', views_user.UserView.as_view(), name='basic-user'),
     path('basic/user/list/', views_user.UserListView.as_view(), name='basic-user-list'),
     path('basic/user/create/', views_user.UserCreateView.as_view(), name='basic-user-create'),

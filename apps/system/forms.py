@@ -19,7 +19,7 @@ class LoginForm(forms.Form):
 class StructureForm(forms.ModelForm):
     class Meta:
         model = Structure
-        fields = ['type', 'name', 'parent']
+        fields = ['type', 'name', 'parent','client_name','client_cname','client_id','client_secret']
 
 
 class UserCreateForm(forms.ModelForm):

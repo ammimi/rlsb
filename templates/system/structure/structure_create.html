@@ -31,6 +31,33 @@
 
                     </div>
 
+
+                    <div class="form-group has-feedback">
+                        <label class="col-sm-2 control-label">客户中文名称</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="client_cname" type="text" value="{{ structure.client_cname }}" />
+                        </div>
+                        <label class="col-sm-2 control-label">客户拼音名称</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="client_name" type="text" value="{{ structure.client_name }}" />
+                        </div>
+
+                    </div>
+
+                    <div class="form-group has-feedback">
+                        <label class="col-sm-2 control-label">客户标识ID</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="client_id" type="text" value="{{ structure.client_id|default_if_none:"" }}" />
+                        </div>
+                        <label class="col-sm-2 control-label">客户密钥</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="client_secret" type="text" value="{{ structure.client_secret }}" />
+                        </div>
+
+                    </div>
+
+
+
                     <div class="form-group has-feedback">
                         <label class="col-sm-2 control-label">所属</label>
                         <div class="col-sm-3">

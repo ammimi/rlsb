@@ -3,7 +3,7 @@ from django.urls import path
 from .views import AttendanceInfoView,AttendanceInfoListView,AttendanceInfoCreateView,AttendanceInfoUpdateView,AttendanceInfoDetailView,AttendanceInfoDeleteView
 
 
-app_name = 'system'
+app_name = 'attendance'
 
 urlpatterns = [
     path('', AttendanceInfoView.as_view(), name='attendanceinfo'),

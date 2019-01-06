@@ -114,7 +114,6 @@ $(function() {
                             {
                                 data:'ifsync',
                                 render : function(data, type, full, meta) {
-                                    console.log(data)
                                     if (data === true){
                                        var ret = "<button class='btn  btn-success btn-xs'>已同步</button>";
                                     }
@@ -133,8 +132,16 @@ $(function() {
 										+ data + ")'><i class='glyphicon glyphicon-list-alt'></i></button>";
                                         ret=ret+"<button title='编辑' onclick='doUpdate("
 										+ data + ")'><i class='glyphicon glyphicon-pencil'></i></button>";
-										 ret=ret+"<button title='删除' onclick='doDelete("
+										 ret=ret+"<button title='上传人脸数据' onclick='doSend("
+										+ data + ")'><i class='glyphicon glyphicon-cloud-upload'></i></button>";
+										  ret=ret+"<button title='删除云上人脸数据' onclick='doDeleteFacedata("
+										+ data + ")'><i class='glyphicon glyphicon-cloud-download'></i></button>";
+										   ret=ret+"<button title='更新人脸数据' onclick='doUpdateFacedata("
+										+ data + ")'><i class='glyphicon glyphicon-refresh'></i></button>";
+                                        ret=ret+"<button title='删除' onclick='doDelete("
                                             + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
+                                        ret=ret+"<button title='人工打卡' onclick='doManualClock("
+                                            + data + ")'><i class='glyphicon glyphicon-hand-up'></i></button>";
 										return ret;
 									}
 								} ],
@@ -269,6 +276,124 @@ function doDelete(id){
     });
 
 }
+
+//同步单条人脸数据
+function doSend(id){
+    layer.alert('当前人脸数据将上传，确定上传吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'facedata:sendfacedata' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('上传成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail') {
+                        //alert(msg.message);
+                        layer.alert(msg.send_local_image, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+
+}
+
+//删除单条人脸数据（云上）
+function doDeleteFacedata(id){
+    layer.alert('当前人脸数据将从云上删除，确定要删除吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'facedata:deletefacedata' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('删除成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail'){
+                        //alert(msg.message);
+                        layer.alert(msg.delete_facedata, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+
+}
+//更新单条人脸数据（云上）
+function doUpdateFacedata(id){
+    layer.alert('将更新云上人脸信息，确定要更新吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'facedata:updatefacedata' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('更新成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail'){
+                        //alert(msg.message);
+                        layer.alert(msg.update_facedata, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+}
+//人工打卡
+function doManualClock(id){
+    layer.alert('确定要手动打卡吗？', {
+        title:'提示'
+        ,icon: 3 //0:感叹号 1：对号 2：差号 3：问号 4：小锁 5：哭脸 6：笑脸
+        ,time: 0 //不自动关闭
+        ,btn: ['YES', 'NO']
+        ,yes: function(index){
+            layer.close(index);
+            $.ajax({
+                type: "POST",
+                url : "{% url 'facedata:manualclock' %}",
+                data : {"id":id, csrfmiddlewaretoken: '{{ csrf_token }}'},  //防止post数据时报 csrf_token 403
+                cache: false,
+                success : function(msg) {
+                    if (msg.status == 'success'){
+                        layer.alert('手动打卡成功',{icon: 1});
+                        oDataTable.ajax.reload();
+                    }else if (msg.status == 'fail'){
+                        //alert(msg.message);
+                        layer.alert(msg.send_local_image, {icon: 5});
+                    }
+                    return ;
+                }
+            });
+        }
+    });
+
+}
+
 
 </script>
 {% endblock %}
