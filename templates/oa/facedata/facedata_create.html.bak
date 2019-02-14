@@ -20,27 +20,38 @@
 
 
                 <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.facedata.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.owner.label}}</label>
                 <div class="col-sm-3">
                     <!--<input class="form-control" name="aclNum" type="text"/>-->
-                    {{ form.facedata}}
+                    {{ form.owner}}
                 </div>
-                <label class="col-sm-2 control-label">{{ form.recorded_datetime.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.face_id.label}}</label>
                 <div class="col-sm-3">
-                    {{ form.recorded_datetime}}
+                    {{ form.face_id}}
 
                 </div>
                 </div>
 
                 <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.recorded_img_url.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.face_name.label}}</label>
                 <div class="col-sm-3">
-                    {{ form.recorded_img_url}}
+                    {{ form.face_name}}
                 </div>
-                
+                <label class="col-sm-2 control-label">{{ form.face_cname.label}}</label>
+                <div class="col-sm-3">
+                    {{ form.face_cname}}
+
+                </div>
                 </div>
 
-              
+                <div class="form-group has-feedback">
+
+                <label class="col-sm-2 control-label">{{ form.face_image.label}}</label>
+                <div class="col-sm-3">
+                    {{ form.face_image}}
+
+                </div>
+                </div>
 
 
             </fieldset>
@@ -63,11 +74,10 @@
 <script type="text/javascript">
 
     $("#btnSave").click(function () {
-        {#var data = $("#addForm").serialize();#}
         var data =  new FormData($( "#addForm" )[0]);
         $.ajax({
             type: $("#addForm").attr('method'),
-            url: "{% url 'attendance:create' %}",
+            url: "{% url 'facedata:create' %}",
             data: data,
             cache: false,
             processData: false,
@@ -78,7 +88,7 @@
                         parent.layer.closeAll(); //关闭所有弹窗
                     });
                 } else if (msg.status == 'fail') {
-                    layer.alert(msg.attendance_create_form, {icon: 5});
+                    layer.alert(msg.facedata_create_form, {icon: 5});
                 }
                 return;
             }
@@ -97,7 +107,7 @@
     /*input 时间输入选择*/
     $(".form_datetime").datetimepicker({
         language: 'zh',
-        //minView: 'month', //选择范围知道日期，不选择时分
+        minView: 'month', //选择范围知道日期，不选择时分
         //weekStart: 1,
         //todayBtn:  1,
         autoclose: 1,
@@ -105,7 +115,7 @@
         //startView: 2,
         forceParse: 0,
         showMeridian: 1,
-        format: 'yyyy-mm-dd hh:ii:ss'
+        format: 'yyyy-mm-dd'
     }).on('changeDate', function (ev) {
         $(this).datetimepicker('hide');
     });

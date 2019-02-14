@@ -13,6 +13,7 @@ from .models import FaceData
 from .forms import FaceDataCreateForm,FaceDataUpdateForm
 from system.models import Menu,SystemSetup
 from system.mixin import LoginRequiredMixin
+from .forms import FaceDataForm
 
 # Create your views here.
 
@@ -22,6 +23,7 @@ class FaceDataView(LoginRequiredMixin, View):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
         ret['titles'] = ('姓名','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片','是否同步人脸数据','详情')
+        ret['form'] =  FaceDataForm()
         return render(request, 'oa/facedata/facedata.html', ret)
 
 
@@ -30,6 +32,8 @@ class FaceDataListView(LoginRequiredMixin, View):
     def get(self, request):
         fields = ['id', 'owner__name', 'face_id', 'face_name','face_cname', 'face_image','ifsync']
         filters = dict()
+        if 'owner__id' in request.GET and request.GET['owner__id']:
+            filters['owner__id'] = request.GET['owner__id']
         #部门过滤条件
         # if request.user.department_id == 9:
         #     filters['belongs_to_id'] = request.user.id

@@ -28,10 +28,11 @@ def post(server_url, params):
     return reply
 
 def getFaceRecognRecords(server_url, params):
-    #print(post(server_url, params).decode("utf-8"))
+    # print(post(server_url, params).decode("utf-8"))
     result = post(server_url, params).decode("utf-8")
     ret = json.loads(result)
     print(ret)
+    return ret
 
 
 if __name__ == "__main__":

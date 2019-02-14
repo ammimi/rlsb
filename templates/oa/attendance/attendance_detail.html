@@ -46,9 +46,9 @@
                     <tbody>
                         <tr class="info">
                             <td width="10%"><strong>姓名</strong></td>
-                            <td class="text-left">{{ attendance.owner }}</td>
+                            <td class="text-left">{{ attendance.facedata.face_cname }}</td>
                             <td width="10%"><strong>考勤时间</strong></td>
-                            <td class="text-left">{{ attendance.attendancetime|date:'Y-m-d H:i:s'}}</td>
+                            <td class="text-left">{{ attendance.recorded_datetime|date:'Y-m-d H:i:s'}}</td>
                         </tr>
 
                         <tr>

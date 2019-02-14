@@ -127,7 +127,8 @@ def processFrameData():
 
 
 #server_url = "http://192.168.1.219/cgi-bin/v0.13/facerecognize/doRecognizeWithVideoFrame.py"
-server_url = "http://192.168.1.219/v0.13/facerecognize/doRecognizeWithVideoFrame"
+#server_url = "http://192.168.1.219/v0.13/facerecognize/doRecognizeWithVideoFrame"
+server_url = "http://222.128.127.3:8185/v0.13/facerecognize/doRecognizeWithVideoFrame"
 encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),100]
        
 if len(sys.argv)<8:

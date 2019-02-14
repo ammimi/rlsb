@@ -4,6 +4,8 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
 <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+<link rel="stylesheet" href="{%static 'plugins/select2/select2.min.css' %}">
+<link rel="stylesheet" href="/static/plugins/daterangepicker/daterangepicker.css">
 <!-- iCheck for checkboxes and radio inputs -->
 {% endblock %}
 
@@ -33,6 +35,20 @@
                     </button>
                 </div>
             </div>
+            <div class="box-header">
+              <form class="form-inline" id="queryForm">
+                <div class="form-group searchArea margin-r-4 margin-top-5">
+                    <label>人员：</label>
+                  {{form.owner}}
+                </div>
+
+                <button type="button" id="btnFaceDataSearch" class="btn btn-default">
+                    <i class="glyphicon glyphicon-search"></i>查询
+                </button>
+            </form>
+            </div>
+
+
             <div class="box-body">
                 <table id="dtbList" class="display" cellspacing="0" width="100%">
                     <thead>
@@ -61,6 +77,8 @@
   <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
   <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
   <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
   <!-- iCheck 1.0.1 -->
   <script type="text/javascript">
 	$(function() {
@@ -80,7 +98,7 @@ $(function() {
 							ajax : {
 								"url":"{% url 'facedata:list' %}",
 								"data":function ( d ) {
-									{#d.select=$("#select").val();#}
+									d.owner__id=$("#owner__id").val();
 								}
 						},
 						columns : [
@@ -224,6 +242,12 @@ $(function() {
 
 
 });
+
+//刷新页面GET查询请求
+$("#btnFaceDataSearch").click(function(){
+        oDataTable.ajax.reload();
+    });
+
 
 function doDetail(id){
     window.location.href="{% url 'facedata:detail' %}?id="+id;
@@ -395,5 +419,11 @@ function doManualClock(id){
 }
 
 
+</script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
+  });
 </script>
 {% endblock %}

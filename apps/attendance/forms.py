@@ -20,6 +20,11 @@ class AttendanceInfoForm(forms.ModelForm):
     class Meta:
         model = AttendanceInfo
         fields = '__all__'
+        widgets = {
+            'facedata': widgets.Select(
+                attrs={"class": " select2", "name": "owner", "id": "facedata__id", 'style': 'width:50%;'}),
+
+        }
 
 
 class AttendanceInfoCreateForm(forms.ModelForm):
@@ -38,9 +43,9 @@ class AttendanceInfoCreateForm(forms.ModelForm):
         model = AttendanceInfo
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
-            'attendancetime':widgets.Input(attrs={"class": "form-control pull-right form_datetime ",'readonly': 'readonly'}, ),
-            'image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
+            'facedata': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
+            'recorded_datetime':widgets.Input(attrs={"class": "form-control pull-right form_datetime ",'readonly': 'readonly'}, ),
+            # 'image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
 
         }
         error_messages = {
@@ -65,10 +70,10 @@ class AttendanceInfoUpdateForm(forms.ModelForm):
         model = AttendanceInfo
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
-            'attendancetime': widgets.Input(
+            'facedata': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
+            'recorded_datetime': widgets.Input(
                 attrs={"class": "form-control pull-right form_datetime ", 'readonly': 'readonly'}, ),
-            'image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
+            # 'image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
 
         }
         error_messages = {

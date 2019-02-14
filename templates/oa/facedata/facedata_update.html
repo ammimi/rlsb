@@ -5,6 +5,11 @@
 <link rel="stylesheet" href="{%static 'plugins/select2/select2.min.css' %}">
 <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
+<style>
+.div-a{ float:left;width:40%;height:40%;border:1px solid #F00}
+.div-b{ float:left;width:30%;height:60%;border:1px solid #000}
+span{ font-size:25px }
+</style>
 {% endblock %}
 
 {% block main %}
@@ -53,6 +58,20 @@
 
                 </div>
                 </div>
+              <div class="form-group has-feedback">
+
+                <label class="col-sm-2 control-label">{{ form.face_image.label}}</label>
+
+                    <div class="div-a" id="contentHolder">
+                        <video id="video" width="100%" height="60%" autoplay></video>
+                        <canvas style="" hidden="hidden" id="canvas" width="520" height="250"></canvas>
+                    </div>
+                    <div class="div-b">
+                        <!-- 测试按钮 -->
+                        <input type="button" id="snap" style="width:100px;height:35px;" value="拍 照"/>
+                    </div>
+                </div>
+
 
 
           </fieldset>
@@ -73,9 +92,57 @@
 <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap-datetimepicker.js' %}"></script>
 <script type="text/javascript">
+    //这段代 主要是获取摄像头的视频流并显示在Video 签中
+    window.addEventListener("DOMContentLoaded", function () {
+        var canvas = document.getElementById("canvas"),
+            context = canvas.getContext("2d"),
+            video = document.getElementById("video"),
+            videoObj = {"video": true},
+            errBack = function (error) {
+                console.log("Video capture error: ", error.code);
+            };
+        //拍照按钮
+        $("#snap").click(function () {
+            context.drawImage(video, 0, 0, 330, 330);
+            alert('拍照成功');
+        })
+        //更新兼容火狐浏览器
+        if (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            navigator.getUserMedia(videoObj, function (stream) {
+                video.srcObject = stream;
+                video.play();
+            }, errBack);
+        }
+
+    }, false);
+
+    function dataURItoBlob(base64Data) {
+		var byteString;
+		if (base64Data.split(',')[0].indexOf('base64') >= 0)
+		byteString = atob(base64Data.split(',')[1]);
+		else
+		byteString = unescape(base64Data.split(',')[1]);
+		var mimeString = base64Data.split(',')[0].split(':')[1].split(';')[0];
+		var ia = new Uint8Array(byteString.length);
+		for (var i = 0; i < byteString.length; i++) {
+		ia[i] = byteString.charCodeAt(i);
+		}
+		return new Blob([ia], {type:mimeString});
+	}
+
+
 
 	$("#btnSave").click(function(){
+	     var canvans = document.getElementById("canvas");
+		//获取浏览器页面的画布对象
+		//以下开始编 数据
+		var imageBase64 = canvans.toDataURL();
+		var blob = dataURItoBlob(imageBase64);  // 上一步中的函数
+
 		var data =  new FormData($( "#addForm" )[0]);
+
+		data.append("face_image", blob,'image.png');
 		$.ajax({
 			type: $("#addForm").attr('method'),
 			url : "{% url 'facedata:update' %}",

@@ -4,6 +4,8 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
 <link rel="stylesheet" href="{% static 'js/plugins/layer/skin/layer.css' %}">
+<link rel="stylesheet" href="{%static 'plugins/select2/select2.min.css' %}">
+<link rel="stylesheet" href="/static/plugins/daterangepicker/daterangepicker.css">
 <!-- iCheck for checkboxes and radio inputs -->
 {% endblock %}
 
@@ -32,7 +34,45 @@
                         <i class="glyphicon glyphicon-trash"></i>删除
                     </button>
                 </div>
+                <div class="btn-group pull-left">&nbsp</div>
+                <div class="btn-group pull-left">
+                    <button type="button" id="btnRecognize" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>考勤
+                    </button>
+
+                </div>
             </div>
+
+             <div class="box-header">
+              <form class="form-inline" id="queryForm">
+                <div class="form-group searchArea margin-r-3 margin-top-5">
+                    <label>考勤人：</label>
+                  {{ form.facedata }}
+                </div>
+
+                  <div class="form-group searchArea margin-r-4 margin-top-5">
+                            <label>考勤时间：</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+                                <span id="date_range"></span>
+                                    <i class="fa fa-caret-down"></i>
+                                </button>
+
+
+                            </div>
+                        </div>
+
+
+                <button type="button" id="btnAttendanceSearch" class="btn btn-warning">
+                    <i class="glyphicon glyphicon-search"></i>查询
+                </button>
+                  <button type="button" id="btnAttendanceExport" class="btn btn-info">
+                    <i class="glyphicon glyphicon-search"></i>导出
+                </button>
+            </form>
+            </div>
+
+
             <div class="box-body">
                 <table id="dtbList" class="display" cellspacing="0" width="100%">
                     <thead>
@@ -57,10 +97,12 @@
 {% endblock %}
 
 {% block javascripts %}
-  <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'plugins/datatables/dataTables.const.js' %}"></script>
   <script src="{% static 'plugins/datatables/moment.min.js' %}"></script>
   <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+  <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
   <!-- iCheck 1.0.1 -->
   <script type="text/javascript">
 	$(function() {
@@ -80,18 +122,19 @@ $(function() {
 							ajax : {
 								"url":"{% url 'attendance:list' %}",
 								"data":function ( d ) {
-									{#d.select=$("#select").val();#}
+									d.facedata__id=$("#facedata__id").val();
+									d.date_range = $("#date_range").html();
 								}
 						},
 						columns : [
 								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
 
 								{
-									data : "owner__name",//parent
+									data : "facedata__face_cname",//parent
 
 								},
 								{
-									data : "attendancetime",//parent
+									data : "recorded_datetime",//parent
                                      render : function(data, type, full, meta) {
                                          return  moment(data).format("YYYY-MM-DD HH:mm:ss");}
 								},
@@ -150,9 +193,44 @@ $(function() {
 		});
 	});
 
-	$("#btnRefresh").click(function(){
-		oDataTable.ajax.reload();
+	$("#btnRecognize").click(function() {
+		layer.open({
+			type : 2,
+			title : '打卡',
+			shadeClose : false,
+			maxmin : true,
+			area : [ '800px', '550px' ],
+			content : "{% url 'attendance:recognizewithvideo' %}",
+			end : function() {
+				//关闭时做的事情
+				oDataTable.ajax.reload();
+			}
+		});
 	});
+
+   //刷新页面GET查询请求
+    $("#btnAttendanceSearch").click(function(){
+            oDataTable.ajax.reload();
+        });
+    //导出查询请求
+    // $("#btnAttendanceExport").click(function(){
+    //
+    //     var facedata__id=$("#facedata__id").val();
+    //     var date_range = $("#date_range").html();
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "{% url 'attendance:export' %}?",
+    //         data:"facedata__id="+facedata__id+'&'+"date_range="+date_range,
+    //     });
+    //     });
+
+    $("#btnAttendanceExport").click(function(){
+
+        var facedata__id=$("#facedata__id").val();
+        var date_range = $("#date_range").html();
+        window.location.href="{% url 'attendance:export' %}?facedata__id="+facedata__id+'&'+"date_range="+date_range;
+        });
+
 
 	//批量删除
 	$("#btnDelete").click(function() {
@@ -250,6 +328,67 @@ function doDelete(id){
     });
 
 }
+
+</script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2();
+  });
+</script>
+<script>
+  function init() {
+            //定义locale汉化插件
+            var locale = {
+                "format": "YYYY-MM-DD HH:mm:ss",
+                "separator": " -222 ",
+                "applyLabel": "确定",
+                "cancelLabel": "取消",
+                "fromLabel": "起始时间",
+                "toLabel": "结束时间'",
+                "customRangeLabel": "自定义",
+                "weekLabel": "W",
+                "daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+                "monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "firstDay": 1
+            };
+            //初始化显示当前时间
+            //$('#daterange-btn span').html(moment().subtract('hours', 24).format('YYYY-MM-DD') + ' - ' + moment().format('YYYY-MM-DD'));
+            //日期控件初始化
+            $('#daterange-btn').daterangepicker(
+                {
+                    timePicker: true, //显示时间
+                    timePicker24Hour: true, //时间制
+                    timePickerSeconds: true, //时间显示到秒
+
+                    'locale': locale,
+                    //汉化按钮部分
+                    // ranges: {
+                    //     '今日': [moment(), moment()],
+                    //     '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    //     '最近7日': [moment().subtract(6, 'days'), moment()],
+                    //     '最近30日': [moment().subtract(29, 'days'), moment()],
+                    //     '本月': [moment().startOf('month'), moment().endOf('month')],
+                    //     '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    // },
+                    opens: 'right',
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('YYYY-MM-DD HH:mm:ss') + ' - ' + end.format('YYYY-MM-DD HH:mm:ss'));
+                    $('#daterange-btn span').attr('id', 'date_range');
+
+                }
+            );
+        };
+        $(document).ready(function () {
+            init();
+
+        });
+
+
 
 </script>
 {% endblock %}

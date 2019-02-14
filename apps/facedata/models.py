@@ -12,10 +12,10 @@ class FaceData(models.Model):
     face_image = models.ImageField( upload_to="facedata/%Y/%m", null=True, blank=True,verbose_name="人脸图片")
     ifsync = models.BooleanField(verbose_name='是否同步数据',default=False)
     def __str__(self):
-        return self.face_name
+        return self.face_cname
 
     class Meta:
         verbose_name = '人脸样本信息'
         verbose_name_plural = verbose_name
-        ordering = ['id']
+        ordering = ['-id']
 

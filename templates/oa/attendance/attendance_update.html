@@ -21,22 +21,22 @@
 
 
              <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.owner.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.facedata.label}}</label>
                 <div class="col-sm-3">
                     <!--<input class="form-control" name="aclNum" type="text"/>-->
-                    {{ form.owner}}
+                    {{ form.facedata}}
                 </div>
-                <label class="col-sm-2 control-label">{{ form.attendancetime.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.recorded_datetime.label}}</label>
                 <div class="col-sm-3">
-                    {{ form.attendancetime}}
+                    {{ form.recorded_datetime}}
 
                 </div>
                 </div>
 
                 <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.image.label}}</label>
+                <label class="col-sm-2 control-label">{{ form.recorded_img_url.label}}</label>
                 <div class="col-sm-3">
-                    {{ form.image}}
+                    {{ form.recorded_img_url}}
                 </div>
 
                 </div>
@@ -94,7 +94,7 @@
 /*input 时间输入选择*/
     $(".form_datetime").datetimepicker({
             language:  'zh',
-            minView: 'month', //选择范围知道日期，不选择时分
+            //minView: 'month', //选择范围知道日期，不选择时分
             //weekStart: 1,
             //todayBtn:  1,
             autoclose: 1,
@@ -102,7 +102,7 @@
             //startView: 2,
             forceParse: 0,
             showMeridian: 1,
-            format: 'yyyy-mm-dd'
+            format: 'yyyy-mm-dd hh:ii:ss'
         }).on('changeDate', function (ev) {
             $(this).datetimepicker('hide');
     });

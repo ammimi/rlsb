@@ -15,7 +15,9 @@ from .models import AttendanceInfo
 from .forms import AttendanceInfoForm,AttendanceInfoCreateForm,AttendanceInfoUpdateForm
 from system.models import Role,Menu
 from system.models import SystemSetup
-
+from .forms import AttendanceInfoForm
+import xlwt
+from io import StringIO,BytesIO
 
 
 User = get_user_model()
@@ -27,19 +29,122 @@ class AttendanceInfoView(LoginRequiredMixin, View):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
         ret['titles'] = ('姓名','考勤时间','考勤图片','详情')
+        ret['form'] = AttendanceInfoForm()
         return render(request, 'oa/attendance/attendance.html', ret)
 
 
 class AttendanceInfoListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'owner__name', 'attendancetime', 'image',]
+        fields = ['id', 'facedata__face_cname', 'recorded_datetime', 'image',]
         filters = dict()
+        if 'facedata__id' in request.GET and request.GET['facedata__id']:
+            filters['facedata__id'] = request.GET['facedata__id']
+        if 'date_range' in request.GET and request.GET['date_range']:
+            date_range = request.GET['date_range'].split(' - ')
+            start_date = date_range[0]
+            end_date = date_range[1]
+            filters['recorded_datetime__range'] = (start_date, end_date)
+            print (filters['recorded_datetime__range'])
         #部门过滤条件
         # if request.user.department_id == 9:
         #     filters['belongs_to_id'] = request.user.id
         ret = dict(data=list(AttendanceInfo.objects.filter(**filters).values(*fields)))
         return HttpResponse(json.dumps(ret, cls=DjangoJSONEncoder), content_type='application/json')
+
+class AttendanceInfoExportView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        fields = ['id', 'facedata__face_cname', 'recorded_datetime', 'image',]
+        filters = dict()
+        if 'facedata__id' in request.GET and request.GET['facedata__id']:
+            filters['facedata__id'] = request.GET['facedata__id']
+        if 'date_range' in request.GET and request.GET['date_range']:
+            date_range = request.GET['date_range'].split(' - ')
+            start_date = date_range[0]
+            end_date = date_range[1]
+            filters['recorded_datetime__range'] = (start_date, end_date)
+
+
+        #部门过滤条件
+        # if request.user.department_id == 9:
+        #     filters['belongs_to_id'] = request.user.id
+        rets = AttendanceInfo.objects.filter(**filters)
+
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response[
+            'Content-Disposition'] = 'attachment;filename={0}.xls'.format('考勤信息')
+        wb = xlwt.Workbook(encoding='utf-8')
+        sheet_prd = wb.add_sheet('考勤信息')
+        style_heading = xlwt.easyxf("""
+                font:
+                    name Arial,
+                    colour_index white,
+                    bold on,
+                    height 0xA0;
+                align:
+                    wrap off,
+                    vert center,
+                    horiz center;
+                pattern:
+                    pattern solid,
+                    fore-colour 0x19;
+                borders:
+                    left THIN,
+                    right THIN,
+                    top THIN,
+                    bottom THIN;
+                """
+                                    )
+        style_body = xlwt.easyxf("""
+                font:
+                    name Arial,
+                    bold off,
+                    height 0XA0;
+                align:
+                    wrap on,
+                    vert center,
+                    horiz left;
+                borders:
+                    left THIN,
+                    right THIN,
+                    top THIN,
+                    bottom THIN;
+                """
+                                 )
+        style_green = xlwt.easyxf(" pattern: pattern solid,fore-colour 0x11;")
+        style_red = xlwt.easyxf(" pattern: pattern solid,fore-colour 0x0A;")
+        fmts = [
+            'M/D/YY',
+            'D-MMM-YY',
+            'D-MMM',
+            'MMM-YY',
+            'h:mm AM/PM',
+            'h:mm:ss AM/PM',
+            'h:mm',
+            'h:mm:ss',
+            'M/D/YY h:mm',
+            'mm:ss',
+            '[h]:mm:ss',
+            'mm:ss.0',
+        ]
+        style_body.num_format_str = fmts[0]
+        # 1st line
+        sheet_prd.write(0, 0, '序列号', style_heading)
+        sheet_prd.write(0, 1, '姓名', style_heading)
+        sheet_prd.write(0, 2, '考勤日期', style_heading)
+        row = 1
+        for ret in rets:
+            sheet_prd.write(row, 0, row, style_heading)
+            sheet_prd.write(row, 1, ret.facedata.face_cname, style_body)
+            sheet_prd.write(row, 2, ret.recorded_datetime, style_body)
+            row += 1
+
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        response.write(output.getvalue())
+        return response
 
 
 class AttendanceInfoCreateView(LoginRequiredMixin, View):
@@ -120,3 +225,6 @@ class AttendanceInfoDeleteView(LoginRequiredMixin, View):
             AttendanceInfo.objects.filter(id__in=id_list).delete()
             ret['result'] = True
         return HttpResponse(json.dumps(ret), content_type='application/json')
+
+
+

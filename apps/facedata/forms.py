@@ -18,7 +18,7 @@ class FaceDataForm(forms.ModelForm):
         model = FaceData
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
+            'owner': widgets.Select(attrs={"class": " select2", "name": "owner","id":"owner__id" ,'style': 'width:50%;'}),
             'face_id': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
             'face_name': widgets.Input(attrs={'class': "form-control", 'rows': "3"}),
             'face_image_url': widgets.Input(attrs={"class": "form-control pull-right f", }),

@@ -69,7 +69,18 @@ def sendLocalImageFile(server_url, params, image_path):
     base64_content_string = base64.b64encode(img_raw_data)
 
     params["unknown_face_image"]=base64_content_string
-    #print(post(server_url, params).decode("utf-8"))
+    print(post(server_url, params).decode("utf-8"))
+    result = post(server_url, params).decode("utf-8")
+    ret = json.loads(result)
+    print(ret)
+    return ret
+
+def sendLocalImage(server_url, params, img_raw_data):
+
+    base64_content_string = base64.b64encode(img_raw_data)
+
+    params["unknown_face_image"] = base64_content_string
+    print(post(server_url, params).decode("utf-8"))
     result = post(server_url, params).decode("utf-8")
     ret = json.loads(result)
     print(ret)
