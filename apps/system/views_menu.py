@@ -2,7 +2,9 @@ from django.views.generic import ListView
 
 from .mixin import LoginRequiredMixin
 from apps.custom import SandboxCreateView, SandboxUpdateView, BreadcrumbMixin
-from .models import Menu
+from .models import Menu,Structure
+from django.shortcuts import render
+
 
 
 class MenuCreateView(SandboxCreateView):
@@ -27,3 +29,8 @@ class MenuUpdateView(SandboxUpdateView):
     def get_context_data(self, **kwargs):
         kwargs['menu_all'] = Menu.objects.all()
         return super().get_context_data(**kwargs)
+
+class MenuTree():
+    def get(self,request):
+        nodes = Structure.objects.all()
+        return render(request, 'system/menutree.html', {'nodes': nodes})

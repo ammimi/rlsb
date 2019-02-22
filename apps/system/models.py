@@ -1,4 +1,5 @@
 from django.db import models
+from mptt.models import MPTTModel
 from django.contrib.auth.models import AbstractUser
 
 
@@ -38,7 +39,7 @@ class Role(models.Model):
     desc = models.CharField(max_length=50, blank=True, null=True, verbose_name="描述")
 
 
-class Structure(models.Model):
+class Structure(MPTTModel):
     """
     组织架构
     """
@@ -49,11 +50,14 @@ class Structure(models.Model):
     client_cname = models.CharField(max_length=30, blank=True,null=True, verbose_name="客户中文名称")
     client_id = models.CharField(max_length=30, blank=True,null=True,unique=True, verbose_name="客户标识ID")
     client_secret = models.CharField(max_length=30, blank=True,null=True,verbose_name="客户密钥")
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, verbose_name="父类架构")
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, verbose_name="父类架构",related_name='children')
 
     class Meta:
         verbose_name = "组织架构"
         verbose_name_plural = verbose_name
+
+    class MPTTMeta:
+        parent_attr = 'parent'
 
     def __str__(self):
         return self.name
