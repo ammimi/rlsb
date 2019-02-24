@@ -28,6 +28,7 @@ urlpatterns = [
     path('basic/user/disable/', views_user.UserDisableView.as_view(), name='basic-user-disable'),
 
     path('rbac/menu/', views_menu.MenuListView.as_view(), name='rbac-menu'),
+    path('rbac/menutree/', views_menu.MenuTree.as_view(), name='rbac-menu'),
     path('rbac/menu/create/', views_menu.MenuCreateView.as_view(), name='rbac-menu-create'),
     path('rbac/menu/update/', views_menu.MenuUpdateView.as_view(), name='rbac-menu-update'),
 

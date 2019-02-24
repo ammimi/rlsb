@@ -56,9 +56,6 @@ class Structure(MPTTModel):
         verbose_name = "组织架构"
         verbose_name_plural = verbose_name
 
-    class MPTTMeta:
-        parent_attr = 'parent'
-
     def __str__(self):
         return self.name
 

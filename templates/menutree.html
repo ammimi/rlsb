@@ -1,0 +1,99 @@
+{% extends "head-footer.html" %}
+{% load staticfiles %}
+{% block css %}
+
+{% endblock %}
+<link rel="stylesheet" href="{% static 'css/zTreeStyle/zTreeStyle.css' %}">
+{% block middle %}
+
+  <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- search form (Optional) -->
+            <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+      </form>
+      <!-- /.search form -->
+
+      <!-- Sidebar Menu -->
+     <ul class="sidebar-menu">
+        <li class="header"></li>
+        <!-- Optionally, you can add icons to the links -->
+         {% for menu in request.reveal_menu %}
+            {% if not menu.url %}
+                <li class="treeview" id="{{ menu.code }}">
+                    <a href="">
+                        <i class="{{ menu.icon }}"></i><span>{{ menu.name }}</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        {% for sub in  menu.sub_menu %}
+                            <li id="{{ sub.code }}">
+                                <a href="{{ sub.url }}"><i class="fa fa-caret-right"></i>{{ sub.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% else %}
+                <li id="{{ menu.code }}">
+                    <a href="{{ menu.url }}"><i class="{{ menu.icon }}"></i><span>{{ menu.name }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+      <div class="zTreeDemoBackground left">
+    <ul id="treeDemo" class="ztree"></ul>
+</div>
+    <!-- /.sidebar -->
+  </aside>
+
+  {% block content %}
+
+
+  {% endblock %}
+
+</div>
+<!-- /.content-wrapper -->
+{% block javascripts %}
+<script src="{% static 'plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+<script src="{% static 'js/plugins/ztree/jquery.ztree.core.js' %}"></script>
+
+    <script type="text/javascript">
+       var setting = {
+            showLine: true,
+            checkable: true
+
+
+
+       };
+
+        /**标准数据格式*/
+        var zNodes =[{
+                "id": 2,
+                "children": [{
+                    "id": 3,
+                    "children": [],
+                    "name": "部门1"
+                }],
+                "name": "考勤公司2"
+            }];
+
+        $(document).ready(function(){
+            /**为容器初始化数据*/
+            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}
