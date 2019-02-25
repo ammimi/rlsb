@@ -1,12 +1,10 @@
 {% extends "head-footer.html" %}
 {% load staticfiles %}
-{% block css %}
+{% load mptt_tags %}
 
-{% endblock %}
-<link rel="stylesheet" href="{% static 'css/zTreeStyle/zTreeStyle.css' %}">
 {% block middle %}
 
-  <aside class="main-sidebar">
+    <aside class="main-sidebar">
 
         <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
@@ -40,6 +38,51 @@
                                 <a href="{{ sub.url }}"><i class="fa fa-caret-right"></i>{{ sub.name }}</a>
                             </li>
                         {% endfor %}
+{#                        {% recursetree nodes %}#}
+{#                        <li>#}
+{#                            {% if node.is_leaf_node %}#}
+{#                                <li><a href="#"><i class="fa fa-caret-right"></i>{{ node.name }}</a></li>#}
+{#                            {% else %}#}
+{#                                <li><a href="#"><i class="fa fa-caret-right"></i>{{ node.name }}</a></li>#}
+{#                                <ul>#}
+{#                                    <li><a href="#"><i class="fa fa-caret-right"></i>{{ children }}</a></li>#}
+{#                                </ul>#}
+{#                            {% endif %}#}
+{#                        </li>#}
+{#                    {% endrecursetree %}#}
+                    <div class="tree well">
+                    <ul>
+                        <li class="parent_li" style="display: list-item">
+                        <span title="折叠此级">
+                        <i class="glyphicon glyphicon-folder-open glyphicon-minus-sign"></i>
+                        用户信息
+                        </span>
+                    <ul>
+
+                        {% recursetree nodes %}
+                        {% if node.is_leaf_node %}
+                            <li class="parent_li" style="display: none">
+                            <span title="折叠此级">
+                            <i class="glyphicon glyphicon-minus-sign"></i>
+                            {{ node.name }}
+                            </span>
+                            </li>
+                        {% else %}
+                            <li class="parent_li" style="display:none">
+                            <span title="折叠此级">
+                            <i class="glyphicon glyphicon-minus-sign"></i>
+                            {{ node.name }}
+                            </span>
+                                <ul>
+                                    {{ children }}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endrecursetree %}
+                    </ul>
+                    </ul>
+                    </div>
+
                     </ul>
                 </li>
             {% else %}
@@ -48,16 +91,32 @@
                     </a>
                 </li>
             {% endif %}
+             <ul>
+
+        </ul>
         {% endfor %}
       </ul>
-      <!-- /.sidebar-menu -->
+
     </section>
-      <div class="zTreeDemoBackground left">
-    <ul id="treeDemo" class="ztree"></ul>
-</div>
     <!-- /.sidebar -->
+    <!-- /.sidebar-menu -->
+
+
+
+
   </aside>
 
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <section class="content-header margin-bottom">
+        <ol class="breadcrumb">
+            {% if menu.parent %}
+            <li class="active"><a href="{{ menu.parent.url | default:'' }}"><spanstyle="color: white;">{{ menu.parent.name }}</a></li>
+            {% endif %}
+            <li class="active"><a href="{{ menu.url }}"><spanstyle="color: white;">{{ menu.name }}</a></li>
+        </ol>
+    </section>
   {% block content %}
 
 
@@ -65,35 +124,32 @@
 
 </div>
 <!-- /.content-wrapper -->
+
+{% endblock %}
+
 {% block javascripts %}
-<script src="{% static 'plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
-<script src="{% static 'js/plugins/ztree/jquery.ztree.core.js' %}"></script>
-
     <script type="text/javascript">
-       var setting = {
-            showLine: true,
-            checkable: true
-
-
-
-       };
-
-        /**标准数据格式*/
-        var zNodes =[{
-                "id": 2,
-                "children": [{
-                    "id": 3,
-                    "children": [],
-                    "name": "部门1"
-                }],
-                "name": "考勤公司2"
-            }];
-
-        $(document).ready(function(){
-            /**为容器初始化数据*/
-            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        $(function () {
+            $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', '折叠此级');
+            $('.tree li.parent_li[ltype=month] > span, .tree li.parent_li[ltype=year]:gt(0) > span').each(function (e) {
+                var children = $(this).parent('li.parent_li').find(' > ul > li');
+                children.hide('fast');
+                $(this).attr('title', '展开此级').find(' > i').addClass('glyphicon-plus-sign').removeClass('glyphicon-minus-sign');
+            });
+            $('.tree li.parent_li > span').on('click', function (e) {
+                var children = $(this).parent('li.parent_li').find(' > ul > li');
+                if (children.is(":visible")) {
+                    children.hide('fast');
+                    $(this).attr('title', '展开此级').find(' > i').addClass('glyphicon-plus-sign').removeClass('glyphicon-minus-sign');
+                } else {
+                    children.show('fast');
+                    $(this).attr('title', '折叠此级').find(' > i').addClass('glyphicon-minus-sign').removeClass('glyphicon-plus-sign');
+                }
+                e.stopPropagation();
+            });
         });
     </script>
-{% endblock %}
+
+
 
 {% endblock %}
