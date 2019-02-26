@@ -51,8 +51,14 @@ class getMenuTree:
         return json.dumps(sz,ensure_ascii=False)
 
 
-class MenuTree(View):
+class MenuTree(LoginRequiredMixin,View):
     def get(self,request):
-        #nodes = Structure.objects.all()
-        nodes = getMenuTree().print()
-        return render(request, 'menutree.html', {'nodes': nodes})
+        role = request.user.roles.all().order_by('id')[0].name
+        if role == '系统管理员':
+            nodes = Structure.objects.all()
+        elif role == '公司级管理员':
+            nodes = Structure.objects.filter(parent=request.id.department)
+        elif role == '部门管理员':
+            nodes = Structure.objects.filter(parent=request.id.department)
+
+        return render(request, 'menutree.html',{'nodes':nodes})

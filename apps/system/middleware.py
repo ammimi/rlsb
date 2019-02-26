@@ -3,6 +3,7 @@ import re
 from django.utils.deprecation import MiddlewareMixin
 from django.conf import settings
 from django.shortcuts import render
+# from .models import Structure
 
 
 class MenuCollection(MiddlewareMixin):
@@ -78,12 +79,20 @@ class MenuCollection(MiddlewareMixin):
             else:
                 reveal_menu = None
             return top_menu, reveal_menu
+    # def get_nodes(self,request):
+    #     role = request.roles.all().order_by('id')[0].name
+    #     if role == '系统管理员':
+    #         nodes = Structure.objects.all()
+    #     elif role == '公司级管理员':
+    #         nodes = Structure.objects.filter(parent=request.id.department)
+    #     elif role == '部门管理员':
+    #         nodes = Structure.objects.filter(parent=request.id.department)
+    #     return nodes
 
     def process_request(self, request):
         if self.get_top_reveal_menu(request):
             request.top_menu, request.reveal_menu = self.get_top_reveal_menu(request)
             request.permission_url_list = self.get_permission_url(request)
-
 
 class RbacMiddleware(MiddlewareMixin):
 

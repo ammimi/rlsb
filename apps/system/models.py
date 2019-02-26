@@ -59,6 +59,13 @@ class Structure(MPTTModel):
     def __str__(self):
         return self.name
 
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+    def save(self, *args, **kwargs):
+        super(Structure, self).save(*args, **kwargs)
+        Structure.objects.rebuild()
+
 
 class UserProfile(AbstractUser):
     name = models.CharField(max_length=20, default="", verbose_name="姓名")

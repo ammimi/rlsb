@@ -97,7 +97,7 @@ export mysqlpasswd=******
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rlsb',
+        'NAME': 'rlsb1',
         'USER': os.environ['mysqluser'],
         'PASSWORD': os.environ['mysqlpasswd'],
         'HOST': '127.0.0.1',
@@ -174,7 +174,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 
-INTERNAL_IPS = ("127.0.0.1","192.168.187.1")
+INTERNAL_IPS = ("127.0.0.1","192.168.187.1","192.168.81.1")
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',
