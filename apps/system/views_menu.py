@@ -6,6 +6,7 @@ from .models import Menu,Structure
 from django.shortcuts import render
 from django.views.generic.base import View
 import  json
+from django.db.models import Q
 
 
 class MenuCreateView(SandboxCreateView):
@@ -57,8 +58,11 @@ class MenuTree(LoginRequiredMixin,View):
         if role == '系统管理员':
             nodes = Structure.objects.all()
         elif role == '公司级管理员':
-            nodes = Structure.objects.filter(parent=request.id.department)
-        elif role == '部门管理员':
-            nodes = Structure.objects.filter(parent=request.id.department)
+            nodes = Structure.objects.filter(tree_id=request.user.department.tree_id)
+        elif role == '部门管理员':#最多支持3级
+            nodes = Structure.objects.filter(Q(tree_id=request.user.department.tree_id,level=1,id=request.user.department.id)|#一级
+                                            Q(tree_id=request.user.department.tree_id,level=2,parent__id=request.user.department.id)|#二级
+                                            Q(tree_id=request.user.department.tree_id,level=3,parent__parent__id=request.user.department.id)     #三级
+                                               )
 
         return render(request, 'menutree.html',{'nodes':nodes})
