@@ -53,6 +53,6 @@ class getMenuTree:
 
 class MenuTree(View):
     def get(self,request):
-        #nodes = Structure.objects.all()
-        nodes = getMenuTree().print()
+        nodes = Structure.objects.all()
+        print(nodes)
         return render(request, 'menutree.html', {'nodes': nodes})

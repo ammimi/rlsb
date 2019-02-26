@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mptt',
     'system',
     'facedata',
     'attendance',
@@ -96,7 +97,7 @@ export mysqlpasswd=******
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rlsb',
+        'NAME': 'rlsb1',
         'USER': os.environ['mysqluser'],
         'PASSWORD': os.environ['mysqlpasswd'],
         'HOST': '127.0.0.1',
