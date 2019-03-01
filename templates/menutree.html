@@ -16,16 +16,16 @@
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
               </span>
-        </div>
-      </form>
+                </div>
+            </form>
       <!-- /.search form -->
 
       <!-- Sidebar Menu -->
-     <ul class="sidebar-menu">
-        <li class="header"></li>
-        <!-- Optionally, you can add icons to the links -->
-         {% for menu in request.reveal_menu %}
-            {% if not menu.url %}
+            <ul class="sidebar-menu">
+                <li class="header"></li>
+                <!-- Optionally, you can add icons to the links -->
+                {% for menu in request.reveal_menu %}
+                {% if not menu.url %}
                 <li class="treeview" id="{{ menu.code }}">
                     <a href="">
                         <i class="{{ menu.icon }}"></i><span>{{ menu.name }}</span>
@@ -33,26 +33,30 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        {% for sub in  menu.sub_menu %}
-                            <li id="{{ sub.code }}">
-                                <a href="{{ sub.url }}"><i class="fa fa-caret-right"></i>{{ sub.name }}</a>
-                            </li>
+                        {% for sub in menu.sub_menu %}
+                        <li id="{{ sub.code }}">
+                            <a href="{{ sub.url }}"><i class="fa fa-caret-right"></i>{{ sub.name }}</a>
+                        </li>
                         {% endfor %}
-{#                        {% recursetree nodes %}#}
-{#                        <li>#}
-{#                            {% if node.is_leaf_node %}#}
-{#                                <li><a href="#"><i class="fa fa-caret-right"></i>{{ node.name }}</a></li>#}
-{#                            {% else %}#}
-{#                                <li><a href="#"><i class="fa fa-caret-right"></i>{{ node.name }}</a></li>#}
-{#                                <ul>#}
-{#                                    <li><a href="#"><i class="fa fa-caret-right"></i>{{ children }}</a></li>#}
-{#                                </ul>#}
-{#                            {% endif %}#}
-{#                        </li>#}
-{#                    {% endrecursetree %}#}
-                    <div class="tree well ">
-                    <ul>
-                        <li class="parent_li" style="display: list-item">
+
+
+                    </ul>
+                </li>
+                {% else %}
+                <li id="{{ menu.code }}">
+                    <a href="{{ menu.url }}"><i class="{{ menu.icon }}"></i><span>{{ menu.name }}</span>
+                    </a>
+                </li>
+                {% endif %}
+                <ul>
+
+                </ul>
+                {% endfor %}
+            </ul>
+
+
+            <ul class="sidebar-menu tree well  ">
+                <li class="treeview parent_li" style="display: list-item">
                         <span title="折叠此级">
                         <i class="glyphicon glyphicon-folder-open glyphicon-minus-sign"></i>
                         用户信息
@@ -61,48 +65,31 @@
 
                         {% recursetree nodes %}
                         {% if node.is_leaf_node %}
-                            <li class="parent_li" style="display: none">
+                        <li class="treeview parent_li" style="display: none">
                             <span title="折叠此级">
                             <i class="glyphicon glyphicon-minus-sign"></i>
                             {{ node.name }}
                             </span>
-                            </li>
+                        </li>
                         {% else %}
-                            <li class="parent_li" style="display:none">
+                        <li class="treeview  parent_li" style="display:none">
                             <span title="折叠此级">
                             <i class="glyphicon glyphicon-minus-sign"></i>
                             {{ node.name }}
                             </span>
-                                <ul>
-                                    {{ children }}
-                                </ul>
-                            </li>
+                            <ul>
+                                {{ children }}
+                            </ul>
+                        </li>
                         {% endif %}
-                    {% endrecursetree %}
+                        {% endrecursetree %}
                     </ul>
-                    </ul>
-                    </div>
+            </ul>
 
-                    </ul>
-                </li>
-            {% else %}
-                <li id="{{ menu.code }}">
-                    <a href="{{ menu.url }}"><i class="{{ menu.icon }}"></i><span>{{ menu.name }}</span>
-                    </a>
-                </li>
-            {% endif %}
-             <ul>
 
-        </ul>
-        {% endfor %}
-      </ul>
-
-    </section>
+        </section>
     <!-- /.sidebar -->
     <!-- /.sidebar-menu -->
-
-
-
 
   </aside>
 
