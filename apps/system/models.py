@@ -66,6 +66,19 @@ class Structure(MPTTModel):
         super(Structure, self).save(*args, **kwargs)
         Structure.objects.rebuild()
 
+class CameraSet(models.Model):
+    userForWebCam = models.CharField(max_length=20,verbose_name='摄像头用户名')
+    pwdForWebCam = models.CharField(max_length=20,verbose_name='摄像头密码')
+    ipForWebCam = models.GenericIPAddressField(verbose_name='摄像头IP')
+    portForWebCam = models.IntegerField(verbose_name='摄像头端口')
+    webCamId = models.CharField(max_length=10,verbose_name='摄像头ID')
+    company = models.ForeignKey(Structure,verbose_name='公司信息',on_delete=models.CASCADE)
+
+class WorkTimeSet(models.Model):
+    uptime = models.DateTimeField(verbose_name='上班时间')
+    downtime = models.DateTimeField(verbose_name='下班时间')
+    company = models.ForeignKey(Structure, verbose_name='公司信息',on_delete=models.CASCADE)
+
 
 class UserProfile(AbstractUser):
     name = models.CharField(max_length=20, default="", verbose_name="姓名")
