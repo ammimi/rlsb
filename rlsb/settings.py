@@ -97,7 +97,7 @@ export mysqlpasswd=******
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rlsb1',
+        'NAME': 'rlsb2',
         'USER': os.environ['mysqluser'],
         'PASSWORD': os.environ['mysqlpasswd'],
         'HOST': '127.0.0.1',

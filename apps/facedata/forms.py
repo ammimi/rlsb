@@ -1,4 +1,5 @@
 from .models import FaceData
+from system.models import Structure
 from django import forms
 from django.forms import widgets
 from django.contrib.auth import get_user_model
@@ -18,7 +19,7 @@ class FaceDataForm(forms.ModelForm):
         model = FaceData
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner","id":"owner__id" ,'style': 'width:50%;'}),
+
             'face_id': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
             'face_name': widgets.Input(attrs={'class': "form-control", 'rows': "3"}),
             'face_image_url': widgets.Input(attrs={"class": "form-control pull-right f", }),
@@ -28,53 +29,53 @@ class FaceDataForm(forms.ModelForm):
 class FaceDataCreateForm(forms.ModelForm):
     def __init__(self, *args, user, **kwargs):
         super(FaceDataCreateForm, self).__init__(*args, **kwargs)
-        if not user.is_superuser:
-            # department = user.department
-            # post = user.post
-            # if post == '部门安全管理员':
-            #     self.fields['owner'].queryset = User.objects.filter(department=department)
-            # else:
-            #     self.fields['owner'].queryset = User.objects.filter(pk=user.id)
-            pass
+        role = user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            self.fields['department'].queryset = Structure.objects.all()
+        elif role == '公司级管理员':
+            self.fields['department'].queryset = Structure.objects.filter(tree_id=user.department.tree_id)
 
     class Meta:
         model = FaceData
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
+            'name': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
+            'birthday':widgets.Input(attrs={"class": "form-control pull-right form_datetime ",'readonly': 'readonly'}, ),
+            'gender':widgets.Select(attrs={"class": " select2", "name": "gender", 'style': 'width:100%;'}),
+            'mobile':widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
+            'joindate':widgets.Input(attrs={"class": "form-control pull-right form_datetime ",'readonly': 'readonly'}, ),
+            'department':widgets.Select(attrs={"class": " select2", "name": "department", 'style': 'width:100%;'}),
+
             'face_id': widgets.Input(attrs={"class": "form-control pull-right  ",}, ),
             'face_name': widgets.Input(attrs={'class': "form-control", 'rows': "3"}),
             'face_image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
         }
-        error_messages = {
-            "owner": {"required": "请选择对应人员"},
 
-        }
 
 class FaceDataUpdateForm(forms.ModelForm):
     def __init__(self, *args, user, **kwargs):
         super(FaceDataUpdateForm, self).__init__(*args, **kwargs)
-        if not user.is_superuser:
-            # department = user.department
-            # post = user.post
-            # if post == '部门安全管理员':
-            #     self.fields['owner'].queryset = User.objects.filter(department=department)
-            # else:
-            #     self.fields['owner'].queryset = User.objects.filter(pk=user.id)
-            pass
-
+        role = user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            self.fields['department'].queryset = Structure.objects.all()
+        elif role == '公司级管理员':
+            self.fields['department'].queryset = Structure.objects.filter(tree_id=user.department.tree_id)
 
     class Meta:
         model = FaceData
         fields = '__all__'
         widgets = {
-            'owner': widgets.Select(attrs={"class": " select2", "name": "owner", 'style': 'width:100%;'}),
+            'name': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
+            'birthday': widgets.Input(
+                attrs={"class": "form-control pull-right form_datetime ", 'readonly': 'readonly'}, ),
+            'gender': widgets.Select(attrs={"class": " select2", "name": "gender", 'style': 'width:100%;'}),
+            'mobile': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
+            'joindate': widgets.Input(
+                attrs={"class": "form-control pull-right form_datetime ", 'readonly': 'readonly'}, ),
+            'department': widgets.Select(attrs={"class": " select2", "name": "department", 'style': 'width:100%;'}),
+
             'face_id': widgets.Input(attrs={"class": "form-control pull-right  ", }, ),
             'face_name': widgets.Input(attrs={'class': "form-control", 'rows': "3"}),
             'face_image': widgets.ClearableFileInput(attrs={'class': "form-control", 'rows': "3"}),
-        }
-        error_messages = {
-            "owner": {"required": "请选择对应人员"},
-
         }
 

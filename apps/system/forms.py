@@ -6,7 +6,7 @@ import re
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import Structure, Menu,SystemSetup
+from .models import Structure, Menu,SystemSetup,CameraSet,WorktimeSet
 
 User = get_user_model()
 
@@ -17,9 +17,39 @@ class LoginForm(forms.Form):
 
 
 class StructureForm(forms.ModelForm):
+    def __init__(self,*args,user,**kwargs):
+        super(SystemSetupForm,self).__init__(*args,**kwargs)
+        role = user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            pass
+        elif role == '公司级管理员':
+            #parent 是本公司的
+            type_choices = (("unit", "单位"), )
+            type = forms.CharField(
+                label='类别',
+                widget=forms.Widget.Select(choices=type_choices,attrs={'class':"form-control inputText"})
+            )
+
+            self.fields['parent'].queryset = Structure.objects.filter(tree_id=user.department.tree_id)
+
+        elif role == '部门管理员':  #部门管理员只有查看权限
+            pass
+
     class Meta:
         model = Structure
         fields = ['type', 'name', 'parent','client_name','client_cname','client_id','client_secret']
+
+class CameraSetForm(forms.ModelForm):
+
+    class Meta:
+        model = CameraSet
+        fields = '__all__'
+
+class WorktimeSetForm(forms.ModelForm):
+
+    class Meta:
+        model = WorktimeSet
+        fields = '__all__'
 
 
 class UserCreateForm(forms.ModelForm):

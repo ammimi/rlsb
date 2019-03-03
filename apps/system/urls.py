@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import SystemView,SystemSetupView
-from . import views_structure, views_user, views_menu, views_role
+from . import views_structure, views_user, views_menu, views_role,views_cameraset,views_worktimeset
 
 app_name = 'system'
 
@@ -12,6 +12,16 @@ urlpatterns = [
     path('basic/structure/list/', views_structure.StructureListView.as_view(), name='basic-structure-list'),
     path('basic/structure/delete/', views_structure.StructureDeleteView.as_view(), name='basic-structure-delete'),
     path('basic/structure/add_user/', views_structure.Structure2UserView.as_view(), name='basic-structure-add_user'),
+
+    path('basic/cameraset/', views_cameraset.CameraSetView.as_view(), name='basic-camera'),
+    path('basic/cameraset/create/', views_cameraset.CameraSetCreateView.as_view(), name='basic-camera-create'),
+    path('basic/cameraset/list/', views_cameraset.CameraSetListView.as_view(), name='basic-camera-list'),
+    path('basic/cameraset/delete/', views_cameraset.CameraSetDeleteView.as_view(), name='basic-camera-delete'),
+
+	path('basic/worktimeset/', views_worktimeset.WorktimeSetView.as_view(), name='basic-worktime'),
+    path('basic/worktimeset/create/', views_worktimeset.WorktimeSetCreateView.as_view(), name='basic-worktime-create'),
+    path('basic/worktimeset/list/', views_worktimeset.WorktimeSetListView.as_view(), name='basic-worktime-list'),
+    path('basic/worktimeset/delete/', views_worktimeset.WorktimeSetDeleteView.as_view(), name='basic-worktime-delete'),
 
     path('basic/structure/addclient/', views_structure.AddClientView.as_view(), name='addclient'),
     path('basic/structure/deleteclient/', views_structure.DeleteClientView.as_view(), name='deleteclient'),

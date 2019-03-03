@@ -12,67 +12,55 @@
             <div class="box-body">
                 <fieldset>
                     <legend>
-                        <h4>组织架构信息</h4>
+                        <h4>摄像头信息</h4>
                     </legend>
-                    <input type="hidden" name="id" value="{{ structure.id }}" />
+                    <input type="hidden" name="id" value="{{ cameraset.id }}" />
                     <div class="form-group has-feedback">
-                        <label class="col-sm-2 control-label">名称</label>
+                        <label class="col-sm-2 control-label">摄像头用户名</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="name" type="text" value="{{ structure.name }}" />
+                            <input class="form-control" name="usercam" type="text" value="{{ cameraset.usercam }}" />
                         </div>
-                        <label class="col-sm-2 control-label">类别</label>
+                        <label class="col-sm-2 control-label">摄像头密码</label>
                         <div class="col-sm-3">
-                            <select class="form-control" name="type">
-                                <option value={{ structure.type }}> {{ structure.get_type_display|default:"--类别--" }} </option>
-                                {% if role == "系统管理员" %}
-
-                                <option value="unit">单位</option>
-                                {% endif %}
-                                <option value="department">部门</option>
-                            </select>
+                             <input class="form-control" name="pwdcam" type="text" value="{{ cameraset.pwdcam }}" />
                         </div>
 
                     </div>
 
 
                     <div class="form-group has-feedback">
-                        <label class="col-sm-2 control-label">客户中文名称</label>
+                        <label class="col-sm-2 control-label">摄像头IP</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="client_cname" type="text" value="{{ structure.client_cname }}" />
+                            <input class="form-control" name="ipcam" type="text" value="{{ cameraset.ipcam }}" />
                         </div>
-                        <label class="col-sm-2 control-label">客户拼音名称</label>
+                        <label class="col-sm-2 control-label">摄像头端口</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="client_name" type="text" value="{{ structure.client_name }}" />
+                            <input class="form-control" name="portcam" type="text" value="{{ cameraset.portcam }}" />
                         </div>
 
                     </div>
 
                     <div class="form-group has-feedback">
-                        <label class="col-sm-2 control-label">客户标识ID</label>
+
+                        <label class="col-sm-2 control-label">摄像头ID</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="client_id" type="text" value="{{ structure.client_id|default_if_none:"" }}" />
+                            <input class="form-control" name="webcamid" type="text" value="{{ cameraset.webcamid }}" />
                         </div>
-                        <label class="col-sm-2 control-label">客户密钥</label>
+                         <label class="col-sm-2 control-label">所属</label>
                         <div class="col-sm-3">
-                            <input class="form-control" name="client_secret" type="text" value="{{ structure.client_secret }}" />
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="form-group has-feedback">
-                        <label class="col-sm-2 control-label">所属</label>
-                        <div class="col-sm-3">
-                            <select class="form-control" name="parent">
-                                <option value={{ structure.parent_id|default_if_none:"" }}> {{ structure.parent.name|default:"" }}
+                            <select class="form-control" name="company">
+                                <option value={{ cameraset.company_id|default_if_none:"" }}> {{ cameraset.company.name|default:"" }}
                                 <option></option>
-                                {% for stru in structure_all %}
+                                {% for stru in company_all %}
                                     <option value={{ stru.id }}> {{ stru.name }} </option>
                                 {% endfor %}
                             </select>
                         </div>
+
                     </div>
+
+
+
                 </fieldset>
 
             </div>
@@ -95,7 +83,7 @@
             var data = $("#addForm").serialize();
             $.ajax({
                 type: $("#addForm").attr('method'),
-                url: "{% url 'system:basic-structure-create' %}",
+                url: "{% url 'system:basic-camera-create' %}",
                 data: data,
                 cache: false,
                 success: function (msg) {

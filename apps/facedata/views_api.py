@@ -35,8 +35,8 @@ class SendFaceDataView(LoginRequiredMixin, View):
             imageFileExtention = imghdr.what(facedata.face_image)
             timestamp = int(time.time())
             url = settings.RLSBURL+"facemng/add"
-            clientId = GetClientIDInfo(facedata.owner.id).get_clientid()
-            clientSecret = GetClientIDInfo(facedata.owner.id).get_clientsecret()
+            clientId = GetClientIDInfo(facedata.id).get_clientid()
+            clientSecret = GetClientIDInfo(facedata.id).get_clientsecret()
 
 
             params = {"client_id": clientId, "client_secret": clientSecret, "face_name": faceName, "face_cname": faceCName,
@@ -86,8 +86,8 @@ class DeleteFaceDataView(LoginRequiredMixin, View):
 
             timestamp = int(time.time())
             url = settings.RLSBURL + "facemng/delete"
-            clientId = GetClientIDInfo(facedata.owner.id).get_clientid()
-            clientSecret = GetClientIDInfo(facedata.owner.id).get_clientsecret()
+            clientId = GetClientIDInfo(facedata.id).get_clientid()
+            clientSecret = GetClientIDInfo(facedata.id).get_clientsecret()
 
             params = {"client_id": clientId, "client_secret": clientSecret, "face_id": faceId, "timestamp": timestamp}
 
@@ -137,8 +137,8 @@ class UpdateFaceDataView(LoginRequiredMixin, View):
 
             timestamp = int(time.time())
             url = settings.RLSBURL + "facemng/update"
-            clientId = GetClientIDInfo(facedata.owner.id).get_clientid()
-            clientSecret = GetClientIDInfo(facedata.owner.id).get_clientsecret()
+            clientId = GetClientIDInfo(facedata.id).get_clientid()
+            clientSecret = GetClientIDInfo(facedata.id).get_clientsecret()
 
             params = {"client_id": clientId, "client_secret": clientSecret, "face_id": faceId, "face_name": faceName,
                       "face_cname": faceCName, "timestamp": timestamp, "image_file_extention": imageFileExtention}
@@ -191,8 +191,8 @@ class ManualClockView(LoginRequiredMixin, View):
 
             timestamp = int(time.time())
             url = settings.RLSBURL + "facerecognize/doRecognizeWithImgFile"
-            clientId = GetClientIDInfo(facedata.owner.id).get_clientid()
-            clientSecret = GetClientIDInfo(facedata.owner.id).get_clientsecret()
+            clientId = GetClientIDInfo(facedata.id).get_clientid()
+            clientSecret = GetClientIDInfo(facedata.id).get_clientsecret()
 
             params = {"client_id": clientId, "client_secret": clientSecret, "timestamp": timestamp}
 

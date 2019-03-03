@@ -20,29 +20,64 @@ span{ font-size:25px }
 		<div class="box-body">
           <fieldset>
             <legend>
+                <h4>基本信息</h4>
             </legend>
 
                 <input class="form-control" name="id" type="hidden" value="{{ facedata.id }}"/>
-
-
-             <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.owner.label}}</label>
+                <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">姓名</label>
                 <div class="col-sm-3">
-                    <!--<input class="form-control" name="aclNum" type="text"/>-->
-                    {{ form.owner}}
-                </div>
-                <label class="col-sm-2 control-label">{{ form.face_id.label}}</label>
-                <div class="col-sm-3">
-                    {{ form.face_id}}
+                        {{ form.name}}
 
+                    </div>
+                <label class="col-sm-2 control-label">性别</label>
+               <div class="col-sm-3">
+                        {{ form.gender}}
+
+                    </div>
+                </div>
+
+                 <div class="form-group has-feedback">
+               <label class="col-sm-2 control-label">生日</label>
+                <div class="col-sm-3">
+                    {{ form.birthday}}
+                </div>
+                 <label class="col-sm-2 control-label">手机</label>
+                <div class="col-sm-3">
+                    {{ form.mobile}}
                 </div>
                 </div>
 
-               <div class="form-group has-feedback">
-                <label class="col-sm-2 control-label">{{ form.face_name.label}}</label>
+                 <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">入职日期</label>
                 <div class="col-sm-3">
-                    {{ form.face_name}}
+                     {{ form.joindate}}
                 </div>
+                <label class="col-sm-2 control-label">部门</label>
+                <div class="col-sm-3">
+                    {{form.department}}
+                </div>
+                </div>
+
+
+             <legend>
+                    <h4>人脸信息</h4>
+                </legend>
+                <div class="form-group has-feedback">
+
+                    <label class="col-sm-2 control-label">{{ form.face_id.label}}</label>
+                    <div class="col-sm-3">
+                        {{ form.face_id}}
+
+                    </div>
+                    <label class="col-sm-2 control-label">{{ form.face_name.label}}</label>
+                    <div class="col-sm-3">
+                        {{ form.face_name}}
+                    </div>
+                </div>
+
+                <div class="form-group has-feedback">
+
                 <label class="col-sm-2 control-label">{{ form.face_cname.label}}</label>
                 <div class="col-sm-3">
                     {{ form.face_cname}}
@@ -50,14 +85,14 @@ span{ font-size:25px }
                 </div>
                 </div>
 
-                <div class="form-group has-feedback">
+                <!--<div class="form-group has-feedback">-->
 
-                <label class="col-sm-2 control-label">{{ form.face_image.label}}</label>
-                <div class="col-sm-3">
-                    {{ form.face_image}}
+                <!--<label class="col-sm-2 control-label">{{ form.face_image.label}}</label>-->
+                <!--<div class="col-sm-3">-->
+                    <!--{{ form.face_image}}-->
 
-                </div>
-                </div>
+                <!--</div>-->
+                <!--</div>-->
               <div class="form-group has-feedback">
 
                 <label class="col-sm-2 control-label">{{ form.face_image.label}}</label>

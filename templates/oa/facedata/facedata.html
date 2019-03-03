@@ -1,5 +1,6 @@
 {% extends "base-left.html" %}
 {% load staticfiles %}
+{% load mptt_tags %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'plugins/datatables/jquery.dataTables.min.css' %}">
@@ -13,7 +14,52 @@
 
     <!-- Main content -->
   <section class="content">
-     <div id="devlist">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="box box-primary">
+
+             <ul class="sidebar-menu tree well  ">
+                <li class="treeview parent_li" style="display: list-item">
+                        <span title="折叠此级">
+                        <i class="glyphicon glyphicon-folder-open glyphicon-minus-sign"></i>
+                        组织架构
+                        </span>
+                    <ul>
+
+                        {% recursetree nodes %}
+                        {% if node.is_leaf_node %}
+                        <li class="treeview parent_li" style="display:true">
+                            <span title="折叠此级">
+                            <i class="glyphicon glyphicon-minus-sign"></i>
+                                <a onclick="doDepart({{node.id}})" >{{ node.name }}</a>
+                            </span>
+                        </li>
+                        {% else %}
+                        <li class="treeview  parent_li" style="display:true">
+                            <span title="折叠此级">
+                            <i class="glyphicon glyphicon-minus-sign"></i>
+                                <a onclick="doDepart({{node.id}})">{{ node.name }}</a>
+                            </span>
+                            <ul>
+                                {{ children }}
+                            </ul>
+                        </li>
+                        {% endif %}
+                        {% endrecursetree %}
+                    </ul>
+            </ul>
+
+          </div>
+
+
+
+        </div>
+
+
+
+
+
+     <div id="devlist" class="col-md-9">
         <div class="box box-primary" id="liebiao">
             <div class="box-header">
 {#                <div class="btn-group pull-left">#}
@@ -39,9 +85,9 @@
               <form class="form-inline" id="queryForm">
                 <div class="form-group searchArea margin-r-4 margin-top-5">
                     <label>人员：</label>
-                  {{form.owner}}
+                  {{form.name}}
                 </div>
-
+                <input hidden name="departmentS" id="departmentS" value="">
                 <button type="button" id="btnFaceDataSearch" class="btn btn-default">
                     <i class="glyphicon glyphicon-search"></i>查询
                 </button>
@@ -79,6 +125,27 @@
   <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
   <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
 <script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript">
+ // $(function () {
+ //            $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', '折叠此级');
+ //            $('.tree li.parent_li[ltype=month] > span, .tree li.parent_li[ltype=year]:gt(0) > span').each(function (e) {
+ //                var children = $(this).parent('li.parent_li').find(' > ul > li');
+ //                children.hide('fast');
+ //                $(this).attr('title', '展开此级').find(' > i').addClass('glyphicon-plus-sign').removeClass('glyphicon-minus-sign');
+ //            });
+ //            $('.tree li.parent_li > span').on('click', function (e) {
+ //                var children = $(this).parent('li.parent_li').find(' > ul > li');
+ //                if (children.is(":visible")) {
+ //                    children.hide('fast');
+ //                    $(this).attr('title', '展开此级').find(' > i').addClass('glyphicon-plus-sign').removeClass('glyphicon-minus-sign');
+ //                } else {
+ //                    children.show('fast');
+ //                    $(this).attr('title', '折叠此级').find(' > i').addClass('glyphicon-minus-sign').removeClass('glyphicon-plus-sign');
+ //                }
+ //                e.stopPropagation();
+ //            });
+ //        });
+</script>
   <!-- iCheck 1.0.1 -->
   <script type="text/javascript">
 	$(function() {
@@ -98,14 +165,19 @@ $(function() {
 							ajax : {
 								"url":"{% url 'facedata:list' %}",
 								"data":function ( d ) {
-									d.owner__id=$("#owner__id").val();
+									d.name=$("#name").val();
+									d.department = $('#departmentS').val();
 								}
 						},
 						columns : [
 								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
 
 								{
-									data : "owner__name",//parent
+									data : "name",//parent
+
+								},
+                                {
+									data : "department__name",//parent
 
 								},
 								{
@@ -198,6 +270,8 @@ $(function() {
 		oDataTable.ajax.reload();
 	});
 
+
+
 	//批量删除
 	$("#btnDelete").click(function() {
 		if ($("input[name='checkList']:checked").length == 0){
@@ -247,6 +321,26 @@ $(function() {
 $("#btnFaceDataSearch").click(function(){
         oDataTable.ajax.reload();
     });
+
+
+//
+// function doDepart(data){
+//         $.ajax({
+//             url: "{% url 'facedata:list' %}"+"?department="+data,
+//             type: "get",
+//             success : function(msg) {
+//                         // oDataTable.ajax.reload();
+//
+//                 }
+//
+//         });
+//     }
+function doDepart(data){
+        $("#departmentS").val(data)
+        oDataTable.ajax.reload();
+    }
+
+
 
 
 function doDetail(id){

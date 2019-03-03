@@ -17,11 +17,11 @@ from .models import Structure
 from .forms import StructureForm
 from apps.custom import BreadcrumbMixin
 from django.conf import settings
-
+from django.db.models import Q
 from apps.utils.sendClientDataOnClientTest import sendClientData
 from apps.utils.deleteClientDataOnClientTest import deletClientData
 from apps.utils.updateClientDataOnClientTest import updateClientData
-
+from facedata.models import FaceData
 User = get_user_model()
 
 
@@ -33,10 +33,16 @@ class StructureView(LoginRequiredMixin,  BreadcrumbMixin, TemplateView):
 class StructureCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
-        ret = dict(structure_all=Structure.objects.all())
+        role = request.user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            ret = dict(structure_all=Structure.objects.all())
+        elif role == '公司级管理员':
+            ret = dict(structure_all=Structure.objects.filter(tree_id=request.user.department.tree_id))
+
         if 'id' in request.GET and request.GET['id']:
             structure = get_object_or_404(Structure, pk=request.GET['id'])
             ret['structure'] = structure
+            ret['role'] = role
         return render(request, 'system/structure/structure_create.html', ret)
 
     def post(self, request):
@@ -45,7 +51,7 @@ class StructureCreateView(LoginRequiredMixin, View):
             structure = get_object_or_404(Structure, pk=request.POST['id'])
         else:
             structure = Structure()
-        structure_form = StructureForm(request.POST, instance=structure)
+        structure_form = StructureForm(request.POST, instance=structure,user=request.user)
         if structure_form.is_valid():
             structure_form.save()
             res['result'] = True
@@ -56,7 +62,18 @@ class StructureListView(LoginRequiredMixin, View):
 
     def get(self, request):
         fields = ['id', 'name', 'type','client_id','client_secret', 'parent__name']
-        ret = dict(data=list(Structure.objects.values(*fields)))
+
+        role = request.user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            ret = dict(data=list(Structure.objects.values(*fields)))
+        elif role == '公司级管理员':
+            ret = dict(data=list(Structure.objects.filter(tree_id=request.user.department.tree_id).values(*fields)))
+        elif role == '部门管理员':
+            ret = dict(data=list(Structure.objects.filter(Q(tree_id=request.user.department.tree_id,level=1,id=request.user.department.id)|#一级
+                                            Q(tree_id=request.user.department.tree_id,level=2,parent__id=request.user.department.id)|#二级
+                                            Q(tree_id=request.user.department.tree_id,level=3,parent__parent__id=request.user.department.id)     #三级
+                                               ).values(*fields)))
+
         return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -237,18 +254,12 @@ class UpdateClientView(LoginRequiredMixin, View):
 
 class GetClientIDInfo:
 
-    def __init__(self,userid):
-        self.user = get_object_or_404(User, pk=userid)
+    def __init__(self,id):
+        self.user = FaceData.objects.get(pk=id)
 
     def get_parent(self):
-        department = self.user.department
-        if department:
-            if department.parent :
-                parent = department.parent
-            else:
-                parent = department
-
-            return parent
+        parent = Structure.objects.get(tree_id=self.user.department.tree_id,level=0)
+        return parent
 
     def get_clientid(self):
         return self.get_parent().client_id
