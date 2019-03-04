@@ -45,10 +45,23 @@
 
              <div class="box-header">
               <form class="form-inline" id="queryForm">
-                <div class="form-group searchArea margin-r-3 margin-top-5">
+                <div class="form-group select2-container--below margin-r-3 margin-top-5">
                     <label>考勤人：</label>
                   {{ form.facedata }}
                 </div>
+
+
+
+                  <div class="form-group select2-container--below margin-r-3 margin-top-5">
+                      <label>部门：</label>
+                            <select class="form-control select2" id="department" name="department">
+                                <option value="">--部门--</option>
+                                {% for structure in structures %}
+                                    <option value="{{ structure.id }}">{{ structure.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
 
                   <div class="form-group searchArea margin-r-4 margin-top-5">
                             <label>考勤时间：</label>
@@ -124,6 +137,7 @@ $(function() {
 								"data":function ( d ) {
 									d.facedata__id=$("#facedata__id").val();
 									d.date_range = $("#date_range").html();
+									d.department = $("#department").val();
 								}
 						},
 						columns : [
@@ -138,7 +152,9 @@ $(function() {
                                      render : function(data, type, full, meta) {
                                          return  moment(data).format("YYYY-MM-DD HH:mm:ss");}
 								},
-
+                            {
+                                data : "state",
+                            },
 								{
 									data : "image",//parent
                                     render : function(data, type, full, meta) {
@@ -228,7 +244,9 @@ $(function() {
 
         var facedata__id=$("#facedata__id").val();
         var date_range = $("#date_range").html();
-        window.location.href="{% url 'attendance:export' %}?facedata__id="+facedata__id+'&'+"date_range="+date_range;
+        var department = $("#department").val();
+
+        window.location.href="{% url 'attendance:export' %}?facedata__id="+facedata__id+'&'+"date_range="+date_range+'&'+"department="+department;
         });
 
 
@@ -340,7 +358,7 @@ function doDelete(id){
   function init() {
             //定义locale汉化插件
             var locale = {
-                "format": "YYYY-MM-DD HH:mm:ss",
+                "format": "YYYY-MM-DD ",
                 "separator": " -222 ",
                 "applyLabel": "确定",
                 "cancelLabel": "取消",
@@ -357,27 +375,27 @@ function doDelete(id){
             //日期控件初始化
             $('#daterange-btn').daterangepicker(
                 {
-                    timePicker: true, //显示时间
-                    timePicker24Hour: true, //时间制
-                    timePickerSeconds: true, //时间显示到秒
+                    timePicker: false, //显示时间
+                    timePicker24Hour: false, //时间制
+                    timePickerSeconds: false, //时间显示到秒
 
                     'locale': locale,
                     //汉化按钮部分
-                    // ranges: {
-                    //     '今日': [moment(), moment()],
-                    //     '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    //     '最近7日': [moment().subtract(6, 'days'), moment()],
-                    //     '最近30日': [moment().subtract(29, 'days'), moment()],
-                    //     '本月': [moment().startOf('month'), moment().endOf('month')],
-                    //     '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    // },
+                    ranges: {
+                        '今日': [moment(), moment()],
+                        '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        '最近7日': [moment().subtract(6, 'days'), moment()],
+                        '最近30日': [moment().subtract(29, 'days'), moment()],
+                        '本月': [moment().startOf('month'), moment().endOf('month')],
+                        '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
                     opens: 'right',
                     startDate: moment().subtract(29, 'days'),
                     endDate: moment()
                 },
 
                 function (start, end) {
-                    $('#daterange-btn span').html(start.format('YYYY-MM-DD HH:mm:ss') + ' - ' + end.format('YYYY-MM-DD HH:mm:ss'));
+                    $('#daterange-btn span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
                     $('#daterange-btn span').attr('id', 'date_range');
 
                 }

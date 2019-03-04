@@ -1,6 +1,7 @@
 
 from django import forms
 from .models import AttendanceInfo
+from facedata.models import FaceData
 from django.forms import widgets
 from django.contrib.auth import get_user_model
 from django.forms.widgets import ClearableFileInput
@@ -17,6 +18,14 @@ class ImageWidget(ClearableFileInput):
     template_with_clear = ''
 
 class AttendanceInfoForm(forms.ModelForm):
+    def __init__(self, *args, user, **kwargs):
+        super(AttendanceInfoForm, self).__init__(*args, **kwargs)
+        role = user.roles.first().name  # 能登录的人都有角色
+        if role == '系统管理员':
+            self.fields['facedata'].queryset = FaceData.objects.all()
+        elif role == '公司级管理员':
+            self.fields['facedata'].queryset = FaceData.objects.filter(department__tree_id=user.department.tree_id)
+
     class Meta:
         model = AttendanceInfo
         fields = '__all__'
