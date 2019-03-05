@@ -37,7 +37,7 @@ class FaceDataView(LoginRequiredMixin, View):
         ret = Menu.get_menu_by_request_url(url=request.path_info)
         ret.update(SystemSetup.getSystemSetupLastData())
         ret['nodes'] = nodes
-        ret['titles'] = ('姓名','部门','人脸样本ID','人脸拼音名称','人脸中文名称','人脸样本图片','是否同步人脸数据','详情')
+        ret['titles'] = ('序号','姓名','部门','人脸样本ID','人脸拼音名称','人脸样本图片','是否同步人脸数据','详情')
         ret['form'] =  FaceDataForm()
         return render(request, 'oa/facedata/facedata.html', ret)
 
@@ -45,7 +45,7 @@ class FaceDataView(LoginRequiredMixin, View):
 class FaceDataListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'name', 'department__name','face_id', 'face_name','face_cname', 'face_image','ifsync']
+        fields = ['id', 'department__name','face_id', 'face_name','face_cname', 'face_image','ifsync']
         filters = dict()
         if 'name' in request.GET and request.GET['name']:
             filters['name'] = request.GET['name']

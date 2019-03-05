@@ -77,7 +77,7 @@ class CameraSet(models.Model):
 class WorktimeSet(models.Model):
     uptime = models.TimeField(verbose_name='上班时间')
     downtime = models.TimeField(verbose_name='下班时间')
-    company = models.ForeignKey(Structure, verbose_name='公司信息',on_delete=models.CASCADE)
+    company = models.OneToOneField(Structure, verbose_name='公司信息',on_delete=models.CASCADE)
 
 
 class UserProfile(AbstractUser):

@@ -22,7 +22,7 @@
                 <li class="treeview parent_li" style="display: list-item">
                         <span title="折叠此级">
                         <i class="glyphicon glyphicon-folder-open glyphicon-minus-sign"></i>
-                        组织架构
+                        <a onclick="doDepart()">组织架构</a>
                         </span>
                     <ul>
 
@@ -81,18 +81,19 @@
                     </button>
                 </div>
             </div>
-            <div class="box-header">
-              <form class="form-inline" id="queryForm">
-                <div class="form-group searchArea margin-r-4 margin-top-5">
-                    <label>人员：</label>
-                  {{form.name}}
-                </div>
-                <input hidden name="departmentS" id="departmentS" value="">
-                <button type="button" id="btnFaceDataSearch" class="btn btn-default">
-                    <i class="glyphicon glyphicon-search"></i>查询
-                </button>
-            </form>
-            </div>
+             <input hidden name="departmentS" id="departmentS" value="">
+            <!--<div class="box-header">-->
+              <!--<form class="form-inline" id="queryForm">-->
+                <!--<div class="form-group searchArea margin-r-4 margin-top-5">-->
+                    <!--<label>人员：</label>-->
+                  <!--{{form.name}}-->
+                <!--</div>-->
+
+                <!--<button hidden type="button" id="btnFaceDataSearch" class="btn btn-default">-->
+                    <!--<i class="glyphicon glyphicon-search"></i>查询-->
+                <!--</button>-->
+            <!--</form>-->
+            <!--</div>-->
 
 
             <div class="box-body">
@@ -101,7 +102,7 @@
                     <tr valign="middle">
                         <th><input type="checkbox" id="checkAll"></th>
                         {% for title in titles %}
-                        <th>{{ title }}</th>
+                        <th style="text-align:center;">{{ title }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
@@ -165,15 +166,18 @@ $(function() {
 							ajax : {
 								"url":"{% url 'facedata:list' %}",
 								"data":function ( d ) {
-									d.name=$("#name").val();
+									// d.name=$("#name").val();
 									d.department = $('#departmentS').val();
 								}
 						},
 						columns : [
 								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
-
-								{
-									data : "name",//parent
+                            {
+                                data : "id",
+                            }
+								,
+                            {
+									data : "face_cname",//parent
 
 								},
                                 {
@@ -188,10 +192,7 @@ $(function() {
 									data : "face_name",//parent
 
 								},
-                            {
-									data : "face_cname",//parent
 
-								},
 
                             {
 									data : "face_image",//parent
@@ -230,8 +231,8 @@ $(function() {
 										+ data + ")'><i class='glyphicon glyphicon-refresh'></i></button>";
                                         ret=ret+"<button title='删除' onclick='doDelete("
                                             + data + ")'><i class='glyphicon glyphicon-trash'></i></button>";
-                                        ret=ret+"<button title='人工打卡' onclick='doManualClock("
-                                            + data + ")'><i class='glyphicon glyphicon-hand-up'></i></button>";
+                                        // ret=ret+"<button title='人工打卡' onclick='doManualClock("
+                                        //     + data + ")'><i class='glyphicon glyphicon-hand-up'></i></button>";
 										return ret;
 									}
 								} ],

@@ -80,7 +80,7 @@
                     <i class="glyphicon glyphicon-search"></i>查询
                 </button>
                   <button type="button" id="btnAttendanceExport" class="btn btn-info">
-                    <i class="glyphicon glyphicon-search"></i>导出
+                    <i class="glyphicon glyphicon-search"></i>导出统计数据
                 </button>
             </form>
             </div>
@@ -92,7 +92,7 @@
                     <tr valign="middle">
                         <th><input type="checkbox" id="checkAll"></th>
                         {% for title in titles %}
-                        <th>{{ title }}</th>
+                        <th style="text-align:left;">{{ title }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
@@ -142,11 +142,17 @@ $(function() {
 						},
 						columns : [
 								DATATABLES_CONSTANT.DATA_TABLES.COLUMN.CHECKBOX,
+                            {
+                                data : 'id',
+                            },
 
-								{
+                            {
 									data : "facedata__face_cname",//parent
 
 								},
+                            {
+                                data : "facedata__department__name",
+                            },
 								{
 									data : "recorded_datetime",//parent
                                      render : function(data, type, full, meta) {

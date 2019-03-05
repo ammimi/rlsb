@@ -14,7 +14,7 @@ import datetime
 from system.mixin import LoginRequiredMixin
 from .models import AttendanceInfo
 from .forms import AttendanceInfoForm,AttendanceInfoCreateForm,AttendanceInfoUpdateForm
-from system.models import Role,Menu,Structure
+from system.models import Role,Menu,Structure,WorktimeSet
 from system.models import SystemSetup
 from facedata.models import FaceData
 import xlwt
@@ -22,6 +22,10 @@ from io import StringIO,BytesIO
 from apps.utils.workDays import workDays
 
 User = get_user_model()
+def addOneDay(daystr):
+    addday = datetime.datetime.strptime(daystr, "%Y-%m-%d")+datetime.timedelta(days=1)
+    return addday.strftime("%Y-%m-%d")
+
 
 
 class AttendanceInfoView(LoginRequiredMixin, View):
@@ -37,7 +41,7 @@ class AttendanceInfoView(LoginRequiredMixin, View):
         elif role == '部门管理员':
             ret = dict(structures=Structure.objects.filter(id=request.user.department.id))
 
-        ret['titles'] = ('姓名','考勤时间','考勤状态','考勤图片','详情')
+        ret['titles'] = ('序号','姓名','部门','考勤时间','考勤状态','考勤图片','详情')
         ret['form'] = AttendanceInfoForm(user=request.user)
 
         return render(request, 'oa/attendance/attendance.html', ret)
@@ -46,14 +50,15 @@ class AttendanceInfoView(LoginRequiredMixin, View):
 class AttendanceInfoListView(LoginRequiredMixin, View):
 
     def get(self, request):
-        fields = ['id', 'facedata__face_cname', 'recorded_datetime', 'state','image',]
+        fields = ['id', 'facedata__face_cname','facedata__department__name', 'recorded_datetime', 'state','image',]
         filters = dict()
         if 'facedata__id' in request.GET and request.GET['facedata__id']:
             filters['facedata__id'] = request.GET['facedata__id']
         if 'date_range' in request.GET and request.GET['date_range']:
             date_range = request.GET['date_range'].split(' - ')
             start_date = date_range[0]
-            end_date = date_range[1]
+            end_date = addOneDay(date_range[1])
+            print(end_date)
             filters['recorded_datetime__range'] = (start_date, end_date)
         if 'department' in request.GET and request.GET['department']:
             filters['facedata__department'] = request.GET['department']
@@ -68,12 +73,13 @@ class AttendanceInfoExportView(LoginRequiredMixin, View):
     def get(self, request):
         fields = ['id', 'facedata__face_cname', 'recorded_datetime', 'image',]
         filters = dict()
-
+        facedatas = []
         if 'facedata__id' in request.GET and request.GET['facedata__id']:
             facedatas = FaceData.objects.filter(id=request.GET['facedata__id'])
         if 'date_range' in request.GET and request.GET['date_range']:
             date_range = request.GET['date_range'].split(' - ')
             start_date = date_range[0]
+            # end_date = addOneDay(date_range[1])
             end_date = date_range[1]
         if 'department' in request.GET and request.GET['department']:
             structure = Structure.objects.get(id=request.GET['department'] )
@@ -81,6 +87,17 @@ class AttendanceInfoExportView(LoginRequiredMixin, View):
                 facedatas = FaceData.objects.filter(department__tree_id= structure.tree_id).order_by('department')
             else:#部门
                 facedatas = FaceData.objects.filter(department=structure)
+        # 如果他没有选，就导出他最大的权限的数据
+        if not facedatas:
+
+            role = request.user.roles.first().name  # 能登录的人都有角色
+            if role == '系统管理员':
+                facedatas = FaceData.objects.all().order_by('department')
+            elif role == '公司级管理员':
+                facedatas = FaceData.objects.filter(department__tree_id= request.user.department.tree_id).order_by('department')
+            elif role == '部门管理员':
+                facedatas = FaceData.objects.filter(department=request.user.department)
+
 
 
         response = HttpResponse(content_type='application/vnd.ms-excel')
@@ -143,55 +160,85 @@ class AttendanceInfoExportView(LoginRequiredMixin, View):
         style_body.num_format_str = fmts[0]
         # 1st line
         sheet_prd.write_merge(0,0,0, 1, '考勤日期', style_heading)
-        sheet_prd.write_merge(0,0,2, 3, date_range, style_heading)
+        try:
+            sheet_prd.write_merge(0,0,2, 3, date_range, style_heading)
+            sheet_prd.write_merge(1, 1, 0, 1, '工作日', style_heading)
+            up = start_date.split('-')
+            down = end_date.split('-')
+            startdate = datetime.datetime(int(up[0]), int(up[1]), int(up[2]),)
+            enddate = datetime.datetime(int(down[0]), int(down[1]), int(down[2]),)
+            work = workDays(startdate, enddate)
 
-        sheet_prd.write_merge(1, 1, 0, 1, '工作日', style_heading)
-        up = start_date.split('-')
-        down = end_date.split('-')
-        startdate = datetime.datetime(int(up[0]), int(up[1]), int(up[2]),)
-        enddate = datetime.datetime(int(down[0]), int(down[1]), int(down[2]),)
-        work = workDays(startdate, enddate)
+            sheet_prd.write_merge(1, 1, 2, 3, work.daysCount(), style_heading)
 
-        sheet_prd.write_merge(1, 1, 2, 3, work.daysCount(), style_heading)
+            '''
+            facedata--
+            '''
+            sheet_prd.write(3,0,'编号')
+            sheet_prd.write(3, 1, '姓名')
+            sheet_prd.write(3, 2, '部门')
+            sheet_prd.write(3, 3, '迟到')
+            sheet_prd.write(3, 4, '早退')
+            sheet_prd.write(3, 5, '旷工')
+            indexday = 0
+            for j in work.workDays():
+                sheet_prd.write(3,6+indexday,j.strftime("%Y-%m-%d"))
+                indexday =indexday +1
+            row = 4
 
-        sheet_prd.write_merge(2, 2, 0, 1, '异常考勤次数', style_heading)
-        sheet_prd.write_merge(2, 2, 2, 3, '填入数字', style_heading)
+            num_yc = 0  #异常考勤数
+            for facedata in facedatas:
+                sheet_prd.write(row,0,str(row-2))
+                sheet_prd.write(row,1,facedata.face_cname)
+                sheet_prd.write(row,2,facedata.department.name)
 
-        '''
-        facedata--
-        '''
-        sheet_prd.write(3,0,'编号')
-        sheet_prd.write(3, 1, '姓名')
-        sheet_prd.write(3, 2, '部门')
-        sheet_prd.write(3, 3, '迟到')
-        sheet_prd.write(3, 4, '早退')
-        sheet_prd.write(3, 5, '旷工')
-        indexday = 0
-        for j in work.workDays():
-            sheet_prd.write(3,6+indexday,j.strftime("%Y-%m-%d"))
-            indexday =indexday +1
-        row = 4
-        for facedata in facedatas:
-            sheet_prd.write(row,0,str(row-2))
-            sheet_prd.write(row,1,facedata.name)
-            sheet_prd.write(row,2,facedata.department.name)
-            sheet_prd.write(row, 3,'迟到')
-            sheet_prd.write(row, 4, '早退')
-            sheet_prd.write(row, 5, '旷工')
-            index_i = 0
-            for i in work.workDays():
-                uprecord = AttendanceInfo.objects.filter(state='上班考勤',facedata=facedata,recorded_datetime__date=i.date())
-                downrecord = AttendanceInfo.objects.filter(state='下班考勤',facedata=facedata,recorded_datetime__date=i.date())
-                checkrecord = ''
-                if uprecord:
-                    checkrecord = checkrecord+'上班:'+uprecord[0].recorded_datetime.strftime("%Y-%m-%d %H:%M:%S")
-                if downrecord:
-                    checkrecord =checkrecord+'下班:'+downrecord[0].recorded_datetime.strftime("%Y-%m-%d %H:%M:%S")
-                sheet_prd.write(row,6+index_i,checkrecord)
-                index_i = index_i+1
+                index_i = 0
+                num_cd = 0  #迟到数
+                num_zt = 0 #早退数
+                num_kg = 0 #旷工数
+
+                #求出facadata 的上下班时间
+                company = Structure.objects.get(tree_id=facedata.department.tree_id,level=0)
+                worktime  =  WorktimeSet.objects.get(company=company)
+                uptime = worktime.uptime
+                downtime = worktime.downtime
 
 
-            row = row +1
+                for i in work.workDays():
+                    uprecord = AttendanceInfo.objects.filter(state='上班考勤',facedata=facedata,recorded_datetime__date=i.date())
+                    downrecord = AttendanceInfo.objects.filter(state='下班考勤',facedata=facedata,recorded_datetime__date=i.date())
+                    checkrecord = ''
+                    if uprecord:
+                        checkrecord = checkrecord+'上班:'+uprecord[0].recorded_datetime.strftime("%Y-%m-%d %H:%M:%S")
+                        if uprecord[0].recorded_datetime.time() > uptime:
+                            num_cd = num_cd +1
+                    else:
+                        num_kg = num_kg + 1
+                    if downrecord:
+                        checkrecord =checkrecord+'下班:'+downrecord[0].recorded_datetime.strftime("%Y-%m-%d %H:%M:%S")
+                        if downrecord[0].recorded_datetime.time() < downtime:
+                            num_zt = num_zt +1
+                    if uprecord and not downrecord:
+                        if uprecord[0].recorded_datetime.time() < uptime:
+                            num_zt = num_zt + 1
+
+                    sheet_prd.write(row,6+index_i,checkrecord)
+                    index_i = index_i+1
+
+                sheet_prd.write(row, 3, str(num_cd))
+                sheet_prd.write(row, 4, str(num_zt))
+                sheet_prd.write(row, 5, str(num_kg))
+                row = row +1
+
+                num_yc = num_yc + num_cd + num_zt + num_kg
+                #填入统计数据：
+            sheet_prd.write_merge(2, 2, 0, 1, '异常考勤次数', style_heading)
+            sheet_prd.write_merge(2, 2, 2, 3, str(num_yc), style_heading)
+        except:
+            sheet_prd.write_merge(0, 0, 2, 3, '请选择考勤日期', style_heading)
+
+
+
 
         output = BytesIO()
         wb.save(output)
