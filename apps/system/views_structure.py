@@ -266,3 +266,18 @@ class GetClientIDInfo:
 
     def get_clientsecret(self):
         return self.get_parent().client_secret
+
+class GetClientIDInfoAdmin:
+
+    def __init__(self,id):
+        self.user = User.objects.get(pk=id)
+
+    def get_parent(self):
+        parent = Structure.objects.get(tree_id=self.user.department.tree_id,level=0)
+        return parent
+
+    def get_clientid(self):
+        return self.get_parent().client_id
+
+    def get_clientsecret(self):
+        return self.get_parent().client_secret

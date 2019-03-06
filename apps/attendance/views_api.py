@@ -21,7 +21,7 @@ from system.models import SystemSetup
 from .models import AttendanceInfo,ImageTmp
 from facedata.models import FaceData
 from django.contrib.auth import get_user_model
-from system.views_structure import GetClientIDInfo
+from system.views_structure import GetClientIDInfo,GetClientIDInfoAdmin
 from apps.utils.doRecognizeWithImgFileOnClientTest import sendLocalImageFile
 #from apps.utils.doRecognizeWithWebCamTestV1 import sendDataBySocketV1,sendDataBySocket
 from apps.utils.doRecognizeWithVideoFrameTest import sendFrameDataByHttp
@@ -54,8 +54,8 @@ class RecognizeWithVideoFrame(View):
 #
 #         send_local_image = sendDataBySocketV1(clientId, webCamId, stringImgData, "")
 # '''
-        clientId = int(GetClientIDInfo(request.user.id).get_clientid())
-        clientSecret = GetClientIDInfo(request.user.id).get_clientsecret()
+        clientId = int(GetClientIDInfoAdmin(request.user.id).get_clientid())
+        clientSecret = GetClientIDInfoAdmin(request.user.id).get_clientsecret()
         webCamId = 123
         send_local_image = sendFrameDataByHttp(clientId, clientSecret, webCamId, stringImgData)
         imagetmp.delete()
@@ -70,14 +70,14 @@ class RecognizeWithVideoFrame(View):
 
                 face_ids = send_local_image['recognized_face_ids_list'].split('#')
 
-                department = request.user.department
-                if department:  # 找到所在的单位
-                    if department.parent:
-                        parent = department.parent
-                        index_depart = 1
-                    else:
-                        parent = department
-                        index_depart = 2
+                # department = request.user.department
+                # if department:  # 找到所在的单位
+                #     if department.parent:
+                #         parent = department.parent
+                #         index_depart = 1
+                #     else:
+                #         parent = department
+                #         index_depart = 2
 
 
 
@@ -89,7 +89,10 @@ class RecognizeWithVideoFrame(View):
 
                 res = {
                     'status': 'success',
-                    'send_local_image': '{}识别成功！'.format(face_ids)
+                    'send_local_image': '{}识别成功！'.format(face_ids),
+                    'face_cname':facedata.face_cname,
+                    'depart':facedata.department,
+
                 }
             else:
                 res = {

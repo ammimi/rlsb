@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-datetimepicker.min.css' %}">
 <style>
 .div-a{ text-align: center;float:left;width:40%;height:40%;border:1px solid #F00}
-.div-b{ float:left;width:30%;height:60%;border:1px solid #000}
+.div-b{ float:left;width:40%;height:60%;border:1px solid #000}
 span{ font-size:25px }
 </style>
 {% endblock %}
@@ -24,13 +24,17 @@ span{ font-size:25px }
 
                 <div class="form-group has-feedback">
                 <div class="div-a" id="contentHolder">
-                        <video id="video" width="100%" height="60%" autoplay></video>
+                        <video id="video" width="100%" height="100%" autoplay></video>
                         <canvas style="" hidden="hidden" id="canvas" width="520" height="250"></canvas>
                     </div>
-                    <!--<div class="div-b">-->
+                    <div class="div-b">
                         <!--&lt;!&ndash; 测试按钮 &ndash;&gt;-->
                         <!--<input type="button" id="snap" style="width:100px;height:35px;" value="打卡"/>-->
-                    <!--</div>-->
+                        <h3>人脸检测实时数据</h3>
+                        <span>姓名：</span><span id="face_cname"></span><br/>
+                        <span>部门：</span><span id="department" ></span><br/>
+                    </div>
+
                 </div>
 
               
@@ -159,6 +163,11 @@ span{ font-size:25px }
                     layer.alert(msg.send_local_image, {icon: 1}, function (index) {
                         parent.layer.closeAll(); //关闭所有弹窗
                     });
+                    var jsonObj = JSON.parse(mes.strjson);
+		   			var face_cname = jsonObj.face_cname;
+		   			var department = jsonObj.depart;
+
+
                 } else if (msg.status == 'fail') {
                     layer.alert(msg.send_local_image, {icon: 5});
                 }

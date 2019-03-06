@@ -43,6 +43,7 @@ class AttendanceInfoView(LoginRequiredMixin, View):
 
         ret['titles'] = ('序号','姓名','部门','考勤时间','考勤状态','考勤图片','详情')
         ret['form'] = AttendanceInfoForm(user=request.user)
+        ret['role'] = role
 
         return render(request, 'oa/attendance/attendance.html', ret)
 
