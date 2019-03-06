@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rlsb.settings')
 
-app = Celery('sandbox')
+app = Celery('rlsb')
 
 app.config_from_object('django.conf:settings')
 

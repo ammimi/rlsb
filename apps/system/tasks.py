@@ -7,3 +7,8 @@ from apps.utils.sendFrameDataByHttpWithWebCamUsed import sendFrameDataByHttp,sen
 @task
 def sendByHttpWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId, clientSecret, frequencyCatched):
     sendFrameDataWithWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId, clientSecret, frequencyCatched)
+
+@task
+def test(id):
+    print(id)
+    return
