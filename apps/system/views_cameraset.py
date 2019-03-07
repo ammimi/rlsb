@@ -18,7 +18,7 @@ from .forms import CameraSetForm
 from apps.custom import BreadcrumbMixin
 from django.conf import settings
 from django.db.models import Q
-from .tasks import test
+from .tasks import test,sendFrameWithCam
 User = get_user_model()
 
 
@@ -51,7 +51,17 @@ class CameraSetCreateView(LoginRequiredMixin, View):
         cameraset_form = CameraSetForm(request.POST, instance=cameraset)
         if cameraset_form.is_valid():
             cameraset = cameraset_form.save()
-            test.delay(cameraset.id)
+
+            userForWebCam = cameraset.usercam
+            pwdForWebCam = cameraset.pwdcam
+            ipForWebCam = cameraset.ipcam
+            portForWebCam = cameraset.portcam
+            webCamId = cameraset.webcamid
+            clientId = cameraset.company.client_id
+            clientSecret = cameraset.company.client_secret
+
+            sendFrameWithCam.delay(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId,
+                                 clientSecret)
             res['result'] = True
         return HttpResponse(json.dumps(res), content_type='application/json')
 

@@ -8,7 +8,7 @@ from urllib.request import urlopen
 from urllib.parse import urlencode
 
 from attendance.models import  AttendanceInfo
-from facedata,models import FaceData
+from facedata.models import FaceData
 
 import hashlib
 import json
@@ -168,5 +168,6 @@ def main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,
     threadObj.setDaemon(True)  # 设置为后台线程，这里默认是False，设置为True之后则主线程不用等待子线程
     threadObj.start()  # 开启线程
     sendFrameDataWithWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam,frequencyCatched)
+    print (frequencyCatched)
 
 
