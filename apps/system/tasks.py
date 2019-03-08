@@ -22,7 +22,7 @@ def test(id):
 
 @task
 def sendFrameWithCam(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret):
-    # main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
-    print('hi')
+    # while(True):
+    main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
     return
 

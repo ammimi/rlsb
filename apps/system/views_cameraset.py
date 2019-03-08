@@ -59,7 +59,6 @@ class CameraSetCreateView(LoginRequiredMixin, View):
             webCamId = cameraset.webcamid
             clientId = cameraset.company.client_id
             clientSecret = cameraset.company.client_secret
-
             sendFrameWithCam.delay(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId,
                                  clientSecret)
             res['result'] = True
