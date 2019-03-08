@@ -1,6 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
+from celery.schedules import crontab
+from datetime import timedelta
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rlsb.settings')
 
@@ -36,3 +39,14 @@ app.conf.ONCE = {
         'default_timeout': 60 * 5
     }
 }
+
+# app.conf.update(
+#     CELERYBEAT_SCHEDULE = {
+#         'sum-task': {
+#             'task': 'system.tasks.sendFrameWithCam',
+#             'schedule': timedelta(seconds=1),
+#             'args': (userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
+#         }
+#
+#     }
+# )

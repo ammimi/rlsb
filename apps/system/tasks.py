@@ -10,6 +10,7 @@ import base64
 
 
 from celery import task
+
 from .sendFrameDataByHttpWithWebCamUsed import main
 # @task
 # def sendByHttpWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId, clientSecret, frequencyCatched):
@@ -22,7 +23,6 @@ def test(id):
 
 @task
 def sendFrameWithCam(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret):
-    # while(True):
     main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
     return
 

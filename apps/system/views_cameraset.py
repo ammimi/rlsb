@@ -51,7 +51,6 @@ class CameraSetCreateView(LoginRequiredMixin, View):
         cameraset_form = CameraSetForm(request.POST, instance=cameraset)
         if cameraset_form.is_valid():
             cameraset = cameraset_form.save()
-
             userForWebCam = cameraset.usercam
             pwdForWebCam = cameraset.pwdcam
             ipForWebCam = cameraset.ipcam
