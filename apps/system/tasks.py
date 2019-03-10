@@ -10,19 +10,37 @@ import base64
 
 
 from celery import task
-
+from .models import CameraSet
 from .sendFrameDataByHttpWithWebCamUsed import main
 # @task
 # def sendByHttpWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId, clientSecret, frequencyCatched):
 #     sendFrameDataWithWebCam(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId, clientSecret, frequencyCatched)
 
+
+
 @task
 def test(id):
     print('hi'+str(id))
     return
+@task
+def add(x,y):
+    print (x+y)
+    print('beat')
+
+    return
 
 @task
-def sendFrameWithCam(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret):
-    main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
+def sendFrameWithCam():
+    camerasets = CameraSet.objects.all()
+    for cameraset in camerasets:
+        userForWebCam = cameraset.usercam
+        pwdForWebCam = cameraset.pwdcam
+        ipForWebCam = cameraset.ipcam
+        portForWebCam = cameraset.portcam
+        webCamId = cameraset.webcamid
+        clientId = cameraset.company.client_id
+        clientSecret = cameraset.company.client_secret
+
+        main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
     return
 

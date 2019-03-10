@@ -51,15 +51,15 @@ class CameraSetCreateView(LoginRequiredMixin, View):
         cameraset_form = CameraSetForm(request.POST, instance=cameraset)
         if cameraset_form.is_valid():
             cameraset = cameraset_form.save()
-            userForWebCam = cameraset.usercam
-            pwdForWebCam = cameraset.pwdcam
-            ipForWebCam = cameraset.ipcam
-            portForWebCam = cameraset.portcam
-            webCamId = cameraset.webcamid
-            clientId = cameraset.company.client_id
-            clientSecret = cameraset.company.client_secret
-            sendFrameWithCam.delay(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId,
-                                 clientSecret)
+            # userForWebCam = cameraset.usercam
+            # pwdForWebCam = cameraset.pwdcam
+            # ipForWebCam = cameraset.ipcam
+            # portForWebCam = cameraset.portcam
+            # webCamId = cameraset.webcamid
+            # clientId = cameraset.company.client_id
+            # clientSecret = cameraset.company.client_secret
+            # sendFrameWithCam.delay(userForWebCam, pwdForWebCam, ipForWebCam, portForWebCam, clientId, webCamId,
+            #                      clientSecret)
             res['result'] = True
         return HttpResponse(json.dumps(res), content_type='application/json')
 

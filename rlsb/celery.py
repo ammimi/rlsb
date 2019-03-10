@@ -40,13 +40,20 @@ app.conf.ONCE = {
     }
 }
 
-# app.conf.update(
-#     CELERYBEAT_SCHEDULE = {
-#         'sum-task': {
-#             'task': 'system.tasks.sendFrameWithCam',
-#             'schedule': timedelta(seconds=1),
-#             'args': (userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
-#         }
-#
-#     }
-# )
+
+
+CELERYBEAT_SCHEDULE = {
+    'add-every-3-seconds': {
+        'task': 'system.tasks.add',
+        # 'schedule': crontab(minute=u'40', hour=u'17',),
+        'schedule': timedelta(seconds=3),
+        'args': (16, 16)
+    },
+    'send-every-2-seconds': {
+        'task': 'system.tasks.sendFrameWithCam',
+        # 'schedule': crontab(minute=u'40', hour=u'17',),
+        'schedule': timedelta(seconds=2),
+        'args': ()
+    },
+}
+

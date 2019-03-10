@@ -136,6 +136,5 @@ def main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,
                     'status': 'fail',
                     'send_local_image': errors
                 }
-    print(datetime.datetime.now)
 
 
