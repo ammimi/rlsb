@@ -40,7 +40,9 @@ def sendFrameWithCam():
         webCamId = cameraset.webcamid
         clientId = cameraset.company.client_id
         clientSecret = cameraset.company.client_secret
-
-        main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
+        try:
+            main(userForWebCam,pwdForWebCam,ipForWebCam,portForWebCam,clientId,webCamId,clientSecret)
+        except:
+            print('第{0}号摄像头故障'.format(cameraset.id))
     return
 
